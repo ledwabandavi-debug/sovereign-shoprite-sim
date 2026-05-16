@@ -103,7 +103,7 @@ export default function App() {
   const [pulse, setPulse] = useState(false);
   const [beam, setBeam] = useState(false);
   const [violation, setViolation] = useState(false);
-  const [ledger, setLedger] = useState<LedgerRow[]>(INVENTORY.slice(0, 4).map((s) => ({
+  const [ledger, setLedger] = useState<LedgerRow[]>(INVENTORY.slice(0, 4).map((s): LedgerRow => ({
     ts: timeNow(), node: "BAV_ST_001", sku: s.id, desc: `${s.short} — R${s.price.toFixed(2)}`,
     value: s.price, whitelist: s.id === "SKU_BAV_002" ? "VALIDATED" : "WHITELIST", hash: `Compliance Hashing(${shortHash()}`,
   })));
