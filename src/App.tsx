@@ -111,10 +111,11 @@ export default function App() {
       buzz();
       setViolation(true);
       flashFX();
-      setLedger((L) => [{
+      const row: LedgerRow = {
         ts: timeNow(), node: "EDGE_042", sku: sku.id, desc: sku.short,
         value: sku.price, whitelist: "VALVE_LOCK", hash: shortHash(),
-      }, ...L].slice(0, 60));
+      };
+      setLedger((L) => [row, ...L].slice(0, 60));
       setTimeout(() => setViolation(false), 2200);
       return;
     }
