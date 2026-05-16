@@ -6,6 +6,7 @@ export default {
       colors: {
         shoprite: { red: "#E30613", yellow: "#FFD200", slate: "#F4F4F4" },
         sixty60: "#0a2a5e",
+        sovereign: { gold: "#c5a059", goldlite: "#e8c97a", obsidian: "#0b0c10", obsidian2: "#14161b" },
       },
       fontFamily: {
         mono: ["JetBrains Mono", "ui-monospace", "monospace"],
