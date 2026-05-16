@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; }
+body {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  background: #0b0d10;
+  color: #111;
+}
+
+@keyframes goldPulse {
+  0% { box-shadow: 0 0 0 0 rgba(255,210,0,0.7); }
+  100% { box-shadow: 0 0 0 40px rgba(255,210,0,0); }
+}
+.gold-pulse { animation: goldPulse 0.6s ease-out; }
+
+@keyframes flashRed {
+  0%,100% { background-color: #E30613; }
+  50% { background-color: #ff3d4d; }
+}
+.flash-red { animation: flashRed 0.35s linear 3; }
+
+.scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
