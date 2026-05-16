@@ -134,7 +134,7 @@ export default function App() {
       const lat = flashFX();
       setLedger((L) => [{
         ts: timeNow(), node: "BAV_ST_001", sku: sku.id, desc: sku.short,
-        value: sku.price, whitelist: "VALVE_LOCK", hash: `Compliance Hashing(${shortHash()}`,
+        value: sku.price, whitelist: "VALVE_LOCK" as const, hash: `Compliance Hashing(${shortHash()}`,
       }, ...L].slice(0, 60));
       setTelemetry((T) => [{ valve: "VALVE_LOCK", tx: `tx${Math.floor(Math.random()*99)}`, latency: lat, hash: "" }, ...T].slice(0, 12));
       setTimeout(() => setViolation(false), 2200);
@@ -149,7 +149,7 @@ export default function App() {
     });
     setLedger((L) => [{
       ts: timeNow(), node: "BAV_ST_001", sku: sku.id, desc: `${sku.short} — R${sku.price.toFixed(2)}`,
-      value: sku.price, whitelist: "WHITELIST", hash: `Compliance Hashing(${shortHash()}`,
+      value: sku.price, whitelist: "WHITELIST" as const, hash: `Compliance Hashing(${shortHash()}`,
     }, ...L].slice(0, 60));
     setTelemetry((T) => [{ valve: "WHITELIST_APPROVED", tx: `tx${Math.floor(Math.random()*99)}`, latency: lat, hash: "" }, ...T].slice(0, 12));
   }
