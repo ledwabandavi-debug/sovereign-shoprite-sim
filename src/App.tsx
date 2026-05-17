@@ -145,7 +145,7 @@ export default function App() {
       setTelemetry((T) => [{
         event: "VALVE_LOCK" as const, sku: sku.id, item_description: sku.name, cost: sku.price,
         allocation_bucket: sku.allocation_bucket, compliance_status: "ERR_70_30_RATIO_VIOLATION",
-        flag: "VALVE_LOCK", handshake_latency: `${lat}ms`,
+        flag: "VALVE_LOCK" as const, handshake_latency: `${lat}ms`,
       }, ...T].slice(0, 14));
       setTimeout(() => setViolation(false), 2400);
       return;
