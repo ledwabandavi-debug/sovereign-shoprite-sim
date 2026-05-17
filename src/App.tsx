@@ -143,7 +143,7 @@ export default function App() {
         value: sku.price, whitelist: "VALVE_LOCK" as const, hash: `Compliance Hashing(${shortHash()}`,
       }, ...L].slice(0, 60));
       setTelemetry((T) => [{
-        event: "VALVE_LOCK", sku: sku.id, item_description: sku.name, cost: sku.price,
+        event: "VALVE_LOCK" as const, sku: sku.id, item_description: sku.name, cost: sku.price,
         allocation_bucket: sku.allocation_bucket, compliance_status: "ERR_70_30_RATIO_VIOLATION",
         flag: "VALVE_LOCK", handshake_latency: `${lat}ms`,
       }, ...T].slice(0, 14));
@@ -162,7 +162,7 @@ export default function App() {
       value: sku.price, whitelist: sku.flag, hash: `Compliance Hashing(${shortHash()}`,
     }, ...L].slice(0, 60));
     setTelemetry((T) => [{
-      event: "POS_SKU_SCAN", sku: sku.id, item_description: sku.name, cost: sku.price,
+      event: "POS_SKU_SCAN" as const, sku: sku.id, item_description: sku.name, cost: sku.price,
       allocation_bucket: sku.allocation_bucket, compliance_status: sku.compliance_status,
       flag: sku.flag, handshake_latency: `${lat}ms`,
     }, ...T].slice(0, 14));
