@@ -9,6 +9,7 @@ import imgChoc from "@/assets/choc.png";
 /* ============ TYPES & DATA ============ */
 type Bucket = "VAULT" | "FLEX";
 type Flag = "WHITELIST" | "LUXURY";
+type Category = "Nutritional Staples" | "Girl Child Protocol" | "Discretionary";
 type SKU = {
   id: string;
   name: string;
@@ -19,26 +20,45 @@ type SKU = {
   allocation_bucket: "70_LOCKED_VAULT" | "30_DYNAMIC_FLEX";
   compliance_status: "WHITELIST_APPROVED" | "DISCRETIONARY_ALLOWED";
   priority?: boolean;
+  category: Category;
+  grit: number;
   img: string;
   emoji?: string;
   accent: string;
 };
 
 const INVENTORY: SKU[] = [
-  { id: "SKU_BAV_001", name: "Ritebrand Super Maize Meal 10kg", short: "Ritebrand Maize Meal 10kg", price: 79.99, bucket: "VAULT", flag: "WHITELIST", allocation_bucket: "70_LOCKED_VAULT", compliance_status: "WHITELIST_APPROVED", img: imgMaize, accent: "#f5c518" },
-  { id: "SKU_BAV_002", name: "Ritebrand Long Life Full Cream Milk 1L", short: "Ritebrand Milk 1L", price: 16.99, bucket: "VAULT", flag: "WHITELIST", allocation_bucket: "70_LOCKED_VAULT", compliance_status: "WHITELIST_APPROVED", img: imgMilk, accent: "#1f4ea1" },
-  { id: "SKU_BAV_003", name: "Stayfree Maxi Scented Pads 10-Pack", short: "Stayfree Maxi Pads 10pk", price: 22.99, bucket: "VAULT", flag: "WHITELIST", allocation_bucket: "70_LOCKED_VAULT", compliance_status: "WHITELIST_APPROVED", priority: true, img: imgPads, accent: "#2aa57f" },
-  { id: "SKU_BAV_004", name: "Albany Superior Sliced White Bread", short: "Albany Superior White Bread", price: 19.99, bucket: "VAULT", flag: "WHITELIST", allocation_bucket: "70_LOCKED_VAULT", compliance_status: "WHITELIST_APPROVED", img: imgBread, accent: "#1a4a8a" },
-  { id: "SKU_BAV_007", name: "Discretionary Soft Drink / Soda 2L", short: "Soft Drink Soda 2L", price: 14.99, bucket: "FLEX", flag: "LUXURY", allocation_bucket: "30_DYNAMIC_FLEX", compliance_status: "DISCRETIONARY_ALLOWED", img: "", emoji: "🥤", accent: "#c2410c" },
-  { id: "SKU_BAV_008", name: "Cadbury Dairy Milk Chocolate Slab 80g", short: "Cadbury Dairy Milk 80g", price: 24.99, bucket: "FLEX", flag: "LUXURY", allocation_bucket: "30_DYNAMIC_FLEX", compliance_status: "DISCRETIONARY_ALLOWED", img: imgChoc, accent: "#6b3a8f" },
-  { id: "SKU_BAV_009", name: "2GB Campus Mobile Data Bundle", short: "2GB Campus Data Bundle", price: 149.0, bucket: "FLEX", flag: "LUXURY", allocation_bucket: "30_DYNAMIC_FLEX", compliance_status: "DISCRETIONARY_ALLOWED", img: "", emoji: "📶", accent: "#5a3aa8" },
+  { id: "SKU_BAV_001", name: "Ritebrand Super Maize Meal 10kg", short: "Ritebrand Maize Meal 10kg", price: 79.99, bucket: "VAULT", flag: "WHITELIST", allocation_bucket: "70_LOCKED_VAULT", compliance_status: "WHITELIST_APPROVED", category: "Nutritional Staples", grit: 15, img: imgMaize, accent: "#f5c518" },
+  { id: "SKU_BAV_002", name: "Ritebrand Long Life Full Cream Milk 1L", short: "Ritebrand Milk 1L", price: 16.99, bucket: "VAULT", flag: "WHITELIST", allocation_bucket: "70_LOCKED_VAULT", compliance_status: "WHITELIST_APPROVED", category: "Nutritional Staples", grit: 10, img: imgMilk, accent: "#1f4ea1" },
+  { id: "SKU_BAV_004", name: "Albany Superior Sliced White Bread", short: "Albany Superior White Bread", price: 19.99, bucket: "VAULT", flag: "WHITELIST", allocation_bucket: "70_LOCKED_VAULT", compliance_status: "WHITELIST_APPROVED", category: "Nutritional Staples", grit: 5, img: imgBread, accent: "#1a4a8a" },
+  { id: "SKU_BAV_010", name: "Nulaid Large Eggs 18-Pack", short: "Nulaid Eggs 18pk", price: 49.99, bucket: "VAULT", flag: "WHITELIST", allocation_bucket: "70_LOCKED_VAULT", compliance_status: "WHITELIST_APPROVED", category: "Nutritional Staples", grit: 12, img: "", emoji: "🥚", accent: "#d4a017" },
+  { id: "SKU_BAV_011", name: "Tastic Parboiled Rice 2kg", short: "Tastic Rice 2kg", price: 37.99, bucket: "VAULT", flag: "WHITELIST", allocation_bucket: "70_LOCKED_VAULT", compliance_status: "WHITELIST_APPROVED", category: "Nutritional Staples", grit: 10, img: "", emoji: "🍚", accent: "#9b6b2a" },
+
+  { id: "SKU_BAV_003", name: "Stayfree Maxi Scented Pads Regular 10-Pack", short: "Stayfree Maxi Pads 10pk", price: 22.99, bucket: "VAULT", flag: "WHITELIST", allocation_bucket: "70_LOCKED_VAULT", compliance_status: "WHITELIST_APPROVED", priority: true, category: "Girl Child Protocol", grit: 20, img: imgPads, accent: "#2aa57f" },
+  { id: "SKU_BAV_005", name: "Lil-lets Essentials Pads Non-Wings 10-Pack", short: "Lil-lets Essentials 10pk", price: 17.99, bucket: "VAULT", flag: "WHITELIST", allocation_bucket: "70_LOCKED_VAULT", compliance_status: "WHITELIST_APPROVED", priority: true, category: "Girl Child Protocol", grit: 20, img: "", emoji: "🌸", accent: "#b964d1" },
+  { id: "SKU_BAV_006", name: "Kotex Refresh Liners Light Scented 20-Pack", short: "Kotex Refresh Liners 20pk", price: 19.99, bucket: "VAULT", flag: "WHITELIST", allocation_bucket: "70_LOCKED_VAULT", compliance_status: "WHITELIST_APPROVED", priority: true, category: "Girl Child Protocol", grit: 20, img: "", emoji: "💮", accent: "#a06bd6" },
+
+  { id: "SKU_BAV_007", name: "Discretionary Soft Drink / Soda 2L", short: "Soft Drink Soda 2L", price: 14.99, bucket: "FLEX", flag: "LUXURY", allocation_bucket: "30_DYNAMIC_FLEX", compliance_status: "DISCRETIONARY_ALLOWED", category: "Discretionary", grit: -50, img: "", emoji: "🥤", accent: "#c2410c" },
+  { id: "SKU_BAV_008", name: "Cadbury Dairy Milk Chocolate Slab 80g", short: "Cadbury Dairy Milk 80g", price: 24.99, bucket: "FLEX", flag: "LUXURY", allocation_bucket: "30_DYNAMIC_FLEX", compliance_status: "DISCRETIONARY_ALLOWED", category: "Discretionary", grit: -50, img: imgChoc, accent: "#6b3a8f" },
+  { id: "SKU_BAV_009", name: "2GB Campus Mobile Data Bundle", short: "2GB Campus Data Bundle", price: 149.0, bucket: "FLEX", flag: "LUXURY", allocation_bucket: "30_DYNAMIC_FLEX", compliance_status: "DISCRETIONARY_ALLOWED", category: "Discretionary", grit: -50, img: "", emoji: "📶", accent: "#5a3aa8" },
 ];
 
 const TOTAL_POOL = 1650;
 const VAULT_INIT = 1155;
 const FLEX_INIT = 495;
 const SLA_MS = 150;
-const TARGET_MS = 138;
+const TARGET_MS = 136;
+
+const DID_YOU_KNOW = [
+  "Did You Know? Maintaining a consistent nutritional basket for 3 consecutive months increases your Grit Score™ by 50 points, pre-qualifying you for Graduate Tech Loans.",
+  "Did You Know? Academic excellence is a behavioral asset. Syncing a 'Pass' result in your Proof of Merit portal triggers an immediate +100 Grit Multiplier.",
+  "Did You Know? Your Grit Score™ serves as your Verified Financial CV. Banks like FNB and Sanlam use this data to waive deposit requirements for your first vehicle.",
+];
+
+const WHATSAPP_INSIGHTS = [
+  { from: "Shoprite Alert", body: "10kg Rice is on special. Optimizing your 70% Vault adds +10 Grit points today.", time: "08:14" },
+  { from: "Shoprite Booster", body: "Hi Refilwe, Shoprite has a 'Booster Monday' special on Full Cream Milk. Buying this today optimizes your 70% Vault and adds +5 Grit points.", time: "08:42" },
+];
 
 /* ============ AUDIO ============ */
 function useAudio() {
@@ -51,12 +71,12 @@ function useAudio() {
     const ac = ctx();
     const o = ac.createOscillator();
     const g = ac.createGain();
-    o.type = "sine"; o.frequency.value = 1380;
+    o.type = "sine"; o.frequency.value = 1200;
     g.gain.setValueAtTime(0.0001, ac.currentTime);
     g.gain.exponentialRampToValueAtTime(0.3, ac.currentTime + 0.005);
-    g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.09);
+    g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.08);
     o.connect(g).connect(ac.destination);
-    o.start(); o.stop(ac.currentTime + 0.1);
+    o.start(); o.stop(ac.currentTime + 0.09);
   };
   const buzz = () => {
     const ac = ctx();
@@ -82,18 +102,19 @@ type LedgerRow = {
   sku: string;
   desc: string;
   value: number;
-  whitelist: "WHITELIST" | "LUXURY" | "VALVE_LOCK";
+  whitelist: "WHITELIST" | "LUXURY" | "VALVE_LOCK" | "MERIT_SYNC";
   hash: string;
 };
 type PulseRow = {
-  event: "POS_SKU_SCAN" | "VALVE_LOCK";
+  event: "POS_SKU_SCAN" | "VALVE_LOCK" | "MERIT_SYNC";
   sku: string;
   item_description: string;
   cost: number;
   allocation_bucket: string;
   compliance_status: string;
-  flag: "WHITELIST" | "LUXURY" | "VALVE_LOCK";
+  flag: string;
   handshake_latency: string;
+  sha256_hash: string;
 };
 
 function timeNow() {
@@ -104,18 +125,22 @@ function timeNow() {
 function shortHash() {
   return "Sa" + Array.from({ length: 14 }, () => Math.floor(Math.random() * 16).toString(16)).join("") + "...";
 }
+function sha256Token() {
+  return "0x" + Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
+}
 
 /* ============ MAIN APP ============ */
 export default function App() {
   const { beep, buzz } = useAudio();
   const [vault, setVault] = useState(VAULT_INIT);
   const [flex, setFlex] = useState(FLEX_INIT);
-  const [grit, setGrit] = useState(840);
+  const [grit, setGrit] = useState(740);
   const [receipt, setReceipt] = useState<ReceiptLine[]>([]);
   const [latency, setLatency] = useState(TARGET_MS);
   const [pulse, setPulse] = useState(false);
   const [beam, setBeam] = useState(false);
   const [violation, setViolation] = useState(false);
+  const [decline, setDecline] = useState(false);
   const [paid, setPaid] = useState(false);
   const [ledger, setLedger] = useState<LedgerRow[]>([]);
   const [telemetry, setTelemetry] = useState<PulseRow[]>([]);
@@ -137,6 +162,7 @@ export default function App() {
     if (sku.bucket === "FLEX" && flex - flexSpend - sku.price < 0) {
       buzz();
       setViolation(true);
+      setDecline(true);
       const lat = flashFX();
       setLedger((L) => [{
         ts: timeNow(), node: "BAV_ST_001", sku: sku.id, desc: sku.short,
@@ -145,9 +171,10 @@ export default function App() {
       setTelemetry((T) => [{
         event: "VALVE_LOCK" as const, sku: sku.id, item_description: sku.name, cost: sku.price,
         allocation_bucket: sku.allocation_bucket, compliance_status: "ERR_70_30_RATIO_VIOLATION",
-        flag: "VALVE_LOCK" as const, handshake_latency: `${lat}ms`,
+        flag: "VALVE_LOCK", handshake_latency: `${lat}ms`, sha256_hash: sha256Token(),
       }, ...T].slice(0, 14));
       setTimeout(() => setViolation(false), 2400);
+      setTimeout(() => setDecline(false), 2800);
       return;
     }
     beep();
@@ -164,7 +191,7 @@ export default function App() {
     setTelemetry((T) => [{
       event: "POS_SKU_SCAN" as const, sku: sku.id, item_description: sku.name, cost: sku.price,
       allocation_bucket: sku.allocation_bucket, compliance_status: sku.compliance_status,
-      flag: sku.flag, handshake_latency: `${lat}ms`,
+      flag: sku.flag, handshake_latency: `${lat}ms`, sha256_hash: sha256Token(),
     }, ...T].slice(0, 14));
   }
 
@@ -174,7 +201,7 @@ export default function App() {
     const flexSpend = receipt.filter((l) => l.sku.bucket === "FLEX").reduce((s, l) => s + l.sku.price * l.qty, 0);
     setVault((v) => Math.max(0, v - vaultSpend));
     setFlex((f) => Math.max(0, f - flexSpend));
-    setGrit((g) => g + Math.min(12, receipt.length * 3));
+    setGrit((g) => g + Math.min(20, receipt.reduce((s, l) => s + Math.max(0, l.sku.grit) * l.qty, 0)));
     beep();
     flashFX();
     setLedger((L) => [{
@@ -183,14 +210,27 @@ export default function App() {
     }, ...L].slice(0, 60));
     setReceipt([]);
     setPaid(true);
-    setTimeout(() => setPaid(false), 4000);
+    setTimeout(() => setPaid(false), 4500);
+  }
+
+  function meritSync() {
+    setGrit((g) => g + 100);
+    const lat = flashFX();
+    setLedger((L) => [{
+      ts: timeNow(), node: "BAV_MR_002", sku: "MERIT_SYNC", desc: "Academic Telemetry Synchronized · PASS · +100 Grit",
+      value: 0, whitelist: "MERIT_SYNC" as const, hash: `Compliance Hashing(${shortHash()}`,
+    }, ...L].slice(0, 60));
+    setTelemetry((T) => [{
+      event: "MERIT_SYNC" as const, sku: "MERIT_SYNC", item_description: "Proof of Merit · Academic Transcript",
+      cost: 0, allocation_bucket: "BEHAVIORAL_ACTUARIAL", compliance_status: "PASS_CONFIRMED",
+      flag: "WHITELIST", handshake_latency: `${lat}ms`, sha256_hash: sha256Token(),
+    }, ...T].slice(0, 14));
   }
 
   function resetAll() {
-    setVault(VAULT_INIT); setFlex(FLEX_INIT); setReceipt([]); setGrit(840); setPaid(false);
+    setVault(VAULT_INIT); setFlex(FLEX_INIT); setReceipt([]); setGrit(740); setPaid(false);
   }
 
-  // tiny idle jitter — but always settles at TARGET_MS during scans
   useEffect(() => {
     const id = setInterval(() => setLatency(() => TARGET_MS + (Math.random() < 0.5 ? -2 : 2)), 4000);
     return () => clearInterval(id);
@@ -216,6 +256,8 @@ export default function App() {
               receipt={receipt} total={total}
               ledger={ledger}
               violation={violation}
+              decline={decline}
+              onMeritSync={meritSync}
             />
             {beam && (
               <div className="absolute top-1/2 -right-6 h-1 w-32 bg-gradient-to-r from-sovereign-goldlite via-sovereign-gold to-transparent rounded-full beam pointer-events-none z-30 shadow-[0_0_20px_rgba(232,201,122,0.9)]" />
@@ -233,23 +275,19 @@ export default function App() {
             </div>
           )}
 
-          {/* TOP — Till checkout: Cashier grid + Paper receipt */}
           <div className="grid grid-cols-12 gap-3">
             <div className="col-span-12 xl:col-span-7">
-              <CashierInventoryGrid receipt={receipt} pulse={pulse} paid={paid} />
+              <CashierInventoryGrid receipt={receipt} pulse={pulse} paid={paid} onScan={scan} />
             </div>
             <div className="col-span-12 xl:col-span-5">
               <LiveReceiptList receipt={receipt} total={total} onFinalize={finalize} onReset={resetAll} paid={paid} />
             </div>
           </div>
 
-          {/* Secure Rail Link bar (replaces circular speedometer) */}
-          <SecureRailLinkBar latency={latency} pulse={pulse} />
+          <SecureRailLinkBar latency={TARGET_MS} pulse={pulse} />
 
-          {/* MIDDLE — Live Telemetry Pulse (above ledger) */}
           <TelemetryPulse rows={telemetry} />
 
-          {/* BOTTOM — CIO Audit Ledger */}
           <CioAuditLedger rows={ledger} />
         </section>
       </div>
@@ -292,7 +330,7 @@ function StatusLED({ label }: { label: string }) {
 
 /* ============ STUDENT PHONE ============ */
 function StudentPhone({
-  tab, setTab, vault, flex, grit, onScan, onFinalize, receipt, total, ledger, violation,
+  tab, setTab, vault, flex, grit, onScan, onFinalize, receipt, total, ledger, violation, decline, onMeritSync,
 }: {
   tab: any; setTab: (t: any) => void;
   vault: number; flex: number; grit: number;
@@ -300,6 +338,8 @@ function StudentPhone({
   receipt: ReceiptLine[]; total: number;
   ledger: LedgerRow[];
   violation: boolean;
+  decline: boolean;
+  onMeritSync: () => void;
 }) {
   const receiptCount = receipt.reduce((s, l) => s + l.qty, 0);
   return (
@@ -327,14 +367,26 @@ function StudentPhone({
             {tab === "Home" && <HomeTab vault={vault} flex={flex} grit={grit} />}
             {tab === "Shop" && <ShopTab onScan={onScan} receipt={receipt} />}
             {tab === "Sixty60" && <Sixty60Tab onScan={onScan} />}
-            {tab === "Merit" && <MeritTab grit={grit} />}
+            {tab === "Merit" && <MeritTab grit={grit} onSync={onMeritSync} />}
             {tab === "Audit" && <AuditTab ledger={ledger} />}
+
+            {decline && (
+              <div className="absolute inset-0 z-40 bg-black/70 flex items-center justify-center p-4">
+                <div className="bg-[#5a0008] border-2 border-shoprite-red rounded-xl p-4 text-center shadow-2xl">
+                  <div className="text-3xl mb-2">🛑</div>
+                  <div className="mono font-black text-shoprite-red text-xs uppercase tracking-widest mb-1">Governance Guard</div>
+                  <div className="text-white text-[11px] font-black leading-snug">
+                    Nutritional Core Protected.<br/>Transaction Declined.
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {receiptCount > 0 && tab !== "Home" && (
             <button onClick={onFinalize}
               className="bg-sovereign-gold text-black font-black uppercase text-xs tracking-wider py-2 px-4 flex justify-between items-center hover:brightness-110">
-              <span>Finalize / Pay · {receiptCount} item{receiptCount > 1 ? "s" : ""}</span>
+              <span>Finalize / Pay · Edge Settlement · {receiptCount} item{receiptCount > 1 ? "s" : ""}</span>
               <span>R{total.toFixed(2)} →</span>
             </button>
           )}
@@ -356,6 +408,62 @@ function StudentPhone({
   );
 }
 
+/* ---------- Did You Know carousel ---------- */
+function DidYouKnowCarousel() {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setI((x) => (x + 1) % DID_YOU_KNOW.length), 5000);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <div className="mx-3 mt-2 relative">
+      <div className="rounded-xl border border-sovereign-gold/50 bg-white/70 backdrop-blur-md shadow-md p-2.5 overflow-hidden">
+        <div className="flex items-center gap-1 mb-1">
+          <span className="text-[8px] mono font-black text-sovereign-gold tracking-widest uppercase">◆ BAV™ Intelligence Layer</span>
+          <span className="ml-auto flex gap-0.5">
+            {DID_YOU_KNOW.map((_, k) => (
+              <span key={k} className={`w-1.5 h-1.5 rounded-full ${k === i ? "bg-shoprite-red" : "bg-neutral-300"}`} />
+            ))}
+          </span>
+        </div>
+        <div className="text-[10px] leading-snug text-black font-medium min-h-[44px] transition-opacity">
+          {DID_YOU_KNOW[i]}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- WhatsApp Insights Hub ---------- */
+function WhatsAppHub() {
+  const [on, setOn] = useState(true);
+  return (
+    <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
+      <div className="flex items-center justify-between px-3 py-2 bg-[#075E54] text-white">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full bg-[#25D366] flex items-center justify-center text-[12px] font-black">W</div>
+          <div className="text-[11px] font-black">WhatsApp Insights Hub</div>
+        </div>
+        <button onClick={() => setOn(!on)}
+          className={`relative w-9 h-5 rounded-full transition ${on ? "bg-[#25D366]" : "bg-neutral-400"}`}>
+          <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition ${on ? "left-4" : "left-0.5"}`} />
+        </button>
+      </div>
+      {on && (
+        <div className="p-2 bg-[#ECE5DD] space-y-1.5">
+          {WHATSAPP_INSIGHTS.map((m, i) => (
+            <div key={i} className="bg-white rounded-lg rounded-tl-none p-2 shadow text-[10px] text-black max-w-[90%]">
+              <div className="font-black text-[#075E54] text-[9px]">{m.from}</div>
+              <div className="leading-snug">{m.body}</div>
+              <div className="text-right text-[7px] text-neutral-500 mt-0.5">{m.time} ✓✓</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ---------- Home Tab ---------- */
 function HomeTab({ vault, flex, grit }: { vault: number; flex: number; grit: number }) {
   return (
@@ -369,6 +477,8 @@ function HomeTab({ vault, flex, grit }: { vault: number; flex: number; grit: num
           <div className="text-[9px] mono text-sovereign-goldlite font-black">AAA-Sovereign</div>
         </div>
       </div>
+
+      <DidYouKnowCarousel />
 
       <div className="p-3 space-y-3">
         <div className="bg-white rounded-xl p-3 space-y-3 border border-neutral-200">
@@ -398,6 +508,8 @@ function HomeTab({ vault, flex, grit }: { vault: number; flex: number; grit: num
             </div>
           </div>
         </div>
+
+        <WhatsAppHub />
       </div>
     </div>
   );
@@ -451,7 +563,7 @@ function ShopTab({ onScan, receipt }: { onScan: (s: SKU) => void; receipt: Recei
 function ProductCard({ s, onScan, qty }: { s: SKU; onScan: (s: SKU) => void; qty: number }) {
   return (
     <button onClick={() => onScan(s)}
-      className="bg-white border border-neutral-200 rounded-lg p-2 text-left hover:shadow-md transition relative overflow-hidden">
+      className={`bg-white border rounded-lg p-2 text-left hover:shadow-md transition relative overflow-hidden ${s.priority ? "border-purple-300 shadow-[0_0_12px_rgba(186,107,224,0.35)]" : "border-neutral-200"}`}>
       <div className="absolute top-1 right-1 bg-shoprite-red text-white text-[7px] font-black px-1 py-0.5 rounded mono z-10">
         Sixty<span className="text-shoprite-yellow">60</span>
       </div>
@@ -470,39 +582,84 @@ function ProductCard({ s, onScan, qty }: { s: SKU; onScan: (s: SKU) => void; qty
         <span className="text-shoprite-red text-base font-black">R{Math.floor(s.price)}</span>
         <span className="text-shoprite-red text-[9px] font-black">.{s.price.toFixed(2).split(".")[1]}</span>
       </div>
-      <div className="flex gap-1 mt-0.5 flex-wrap">
-        <span className={`text-[8px] font-black uppercase inline-block px-1 py-0.5 rounded ${s.flag === "WHITELIST" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
-          {s.flag === "WHITELIST" ? "🔒 WHITELIST" : "💳 LUXURY"}
+      <div className="flex gap-1 mt-0.5 flex-wrap items-center">
+        <span className={`text-[8px] font-black uppercase inline-block px-1 py-0.5 rounded ${s.flag === "WHITELIST" ? "bg-emerald-100 text-emerald-800" : "bg-neutral-200 text-neutral-700"}`}>
+          {s.flag === "WHITELIST" ? "🔒 VAULT" : "💳 FLEX"}
         </span>
-        {s.priority && <span className="text-[8px] font-black uppercase inline-block px-1 py-0.5 rounded bg-pink-100 text-pink-800">★ DIGNITY</span>}
+        {s.priority && <span className="text-[8px] font-black uppercase inline-block px-1 py-0.5 rounded bg-purple-100 text-purple-800">★ DIGNITY</span>}
+        <span className={`text-[8px] font-black inline-block px-1 py-0.5 rounded mono ${s.grit > 0 ? "bg-sovereign-gold/20 text-sovereign-gold" : "bg-red-100 text-red-700"}`}>
+          {s.grit > 0 ? `+${s.grit}` : s.grit} Grit
+        </span>
       </div>
     </button>
   );
 }
 
+/* ---------- Sixty60 Tab (categorized hyper-real grid) ---------- */
 function Sixty60Tab({ onScan }: { onScan: (s: SKU) => void }) {
+  const cats: Category[] = ["Nutritional Staples", "Girl Child Protocol", "Discretionary"];
+  const catMeta: Record<Category, { tag: string; color: string }> = {
+    "Nutritional Staples": { tag: "Locked Vault Eligible", color: "bg-emerald-500" },
+    "Girl Child Protocol": { tag: "Super-Essential · Dignity", color: "bg-purple-500" },
+    "Discretionary": { tag: "Flex Wallet Only", color: "bg-neutral-500" },
+  };
   return (
-    <div className="bg-sixty60 min-h-full text-white p-3">
-      <div className="flex items-center gap-2 mb-3">
-        <div className="bg-white text-sixty60 font-black px-2 py-1 rounded text-sm">Sixty<span className="text-shoprite-red">60</span></div>
-        <div className="text-[10px] opacity-80">Delivered in 60 minutes</div>
+    <div className="bg-white min-h-full">
+      <div className="bg-shoprite-red text-white px-3 py-2 flex items-center gap-2">
+        <div className="bg-white text-shoprite-red font-black px-2 py-0.5 rounded text-sm">Sixty<span className="text-shoprite-yellow">60</span></div>
+        <div className="text-[10px] font-black">Delivered in 60 minutes</div>
+        <span className="ml-auto text-[9px] mono opacity-80">Ritebrand · BAV™ Linked</span>
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        {INVENTORY.filter(s => s.bucket === "VAULT").map(s => (
-          <button key={s.id} onClick={() => onScan(s)} className="bg-white text-black rounded-lg p-2 text-left">
-            <div className="aspect-square rounded mb-1 bg-white overflow-hidden flex items-center justify-center">
-              {s.img ? <img src={s.img} alt={s.short} className="w-full h-full object-contain p-1" loading="lazy" /> : <div className="text-3xl">{s.emoji}</div>}
+      <div className="p-2 space-y-3">
+        {cats.map((cat) => (
+          <div key={cat}>
+            <div className="flex items-center gap-2 mb-1.5 px-1">
+              <span className={`w-1.5 h-4 rounded ${catMeta[cat].color}`} />
+              <span className="text-[10px] font-black uppercase tracking-wide text-black">{cat}</span>
+              <span className="text-[8px] mono text-neutral-500">· {catMeta[cat].tag}</span>
             </div>
-            <div className="text-[10px] font-black">{s.short}</div>
-            <div className="text-sm font-black text-shoprite-red">R{s.price.toFixed(2)}</div>
-          </button>
+            <div className="grid grid-cols-2 gap-2">
+              {INVENTORY.filter(s => s.category === cat).map(s => (
+                <button key={s.id} onClick={() => onScan(s)}
+                  className={`bg-white text-black rounded-lg p-2 text-left border hover:shadow-md transition relative ${s.priority ? "border-purple-300 shadow-[0_0_10px_rgba(186,107,224,0.35)]" : "border-neutral-200"}`}>
+                  <div className="absolute top-1 right-1 bg-sovereign-gold text-black text-[7px] font-black mono px-1 py-0.5 rounded">
+                    {s.grit > 0 ? `+${s.grit}` : s.grit} Grit
+                  </div>
+                  <div className="aspect-square rounded mb-1 bg-white overflow-hidden flex items-center justify-center">
+                    {s.img ? <img src={s.img} alt={s.short} className="w-full h-full object-contain p-1" loading="lazy" /> : <div className="text-3xl">{s.emoji}</div>}
+                  </div>
+                  <div className="text-[10px] font-black leading-tight line-clamp-2 min-h-[26px]">{s.short}</div>
+                  <div className="bg-shoprite-red text-white inline-block px-1.5 py-0.5 rounded mt-1 text-[11px] font-black">
+                    R{s.price.toFixed(2)}
+                  </div>
+                  {s.priority && <div className="mt-1 text-[7px] font-black uppercase text-purple-700">★ Dignity Protocol</div>}
+                </button>
+              ))}
+            </div>
+          </div>
         ))}
       </div>
     </div>
   );
 }
 
-function MeritTab({ grit }: { grit: number }) {
+/* ---------- Merit Tab (upload portal) ---------- */
+function MeritTab({ grit, onSync }: { grit: number; onSync: () => void }) {
+  const [stage, setStage] = useState<"idle" | "scanning" | "done">("idle");
+  const [filename, setFilename] = useState<string>("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function handleFile(f: File | undefined) {
+    if (!f) return;
+    setFilename(f.name);
+    setStage("scanning");
+    setTimeout(() => {
+      setStage("done");
+      onSync();
+      setTimeout(() => setStage("idle"), 4000);
+    }, 2500);
+  }
+
   return (
     <div className="p-3 space-y-3">
       <div className="obsidian gold-border rounded-2xl p-4 text-center">
@@ -510,6 +667,53 @@ function MeritTab({ grit }: { grit: number }) {
         <div className="text-4xl gold-text font-black mt-1">{grit}</div>
         <div className="text-[10px] mono text-white/60">AAA-SOVEREIGN BAND</div>
       </div>
+
+      <div className="bg-white border border-neutral-200 rounded-xl p-3 shadow-sm">
+        <div className="text-[11px] font-black text-black uppercase tracking-wide">
+          Synchronize Academic Performance Telemetry
+        </div>
+        <div className="text-[9px] text-neutral-500 mt-0.5">Behavioral Actuarial Performance Telemetry · BAV™ Secure Rail</div>
+
+        <div
+          onClick={() => stage === "idle" && inputRef.current?.click()}
+          onDragOver={(e) => { e.preventDefault(); }}
+          onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files?.[0]); }}
+          className={`mt-3 rounded-lg border-2 border-dashed p-4 text-center cursor-pointer transition ${
+            stage === "scanning" ? "border-sovereign-gold bg-sovereign-gold/10" :
+            stage === "done" ? "border-emerald-500 bg-emerald-50" :
+            "border-neutral-300 hover:border-shoprite-red bg-neutral-50"
+          }`}
+        >
+          <input ref={inputRef} type="file" className="hidden"
+            accept=".pdf,.png,.jpg,.jpeg,.docx"
+            onChange={(e) => handleFile(e.target.files?.[0] || undefined)} />
+
+          {stage === "idle" && (
+            <>
+              <div className="text-3xl mb-1">📄⤴</div>
+              <div className="text-[11px] font-black text-black">Upload Official Academic Transcript / Proof of Merit</div>
+              <div className="text-[9px] text-neutral-500 mt-1">Drag &amp; drop · or tap to browse · PDF / PNG / JPG</div>
+            </>
+          )}
+
+          {stage === "scanning" && (
+            <>
+              <div className="mx-auto w-10 h-10 border-4 border-sovereign-gold border-t-transparent rounded-full animate-spin mb-2" />
+              <div className="text-[11px] font-black text-black">Scanning Academic Metadata via Secure BAV™ Rail...</div>
+              <div className="text-[9px] mono text-neutral-600 mt-1 truncate">{filename}</div>
+            </>
+          )}
+
+          {stage === "done" && (
+            <>
+              <div className="text-4xl text-emerald-500 mb-1">✓</div>
+              <div className="text-[11px] font-black text-emerald-700 uppercase">Telemetry Synchronized: Pass Result Confirmed</div>
+              <div className="text-[10px] mono text-emerald-700 mt-1">Grit Score +100 · Ledger Row Logged</div>
+            </>
+          )}
+        </div>
+      </div>
+
       {["Statutory Compliance · 100%", "Vault Discipline · A+", "Flex Restraint · A", "Audit Streak · 26 days"].map((t) => (
         <div key={t} className="bg-white border border-neutral-200 rounded-lg p-3 text-[11px] font-black text-black flex justify-between">
           <span>{t}</span><span className="text-emerald-600">✓</span>
@@ -520,6 +724,10 @@ function MeritTab({ grit }: { grit: number }) {
 }
 
 function AuditTab({ ledger }: { ledger: LedgerRow[] }) {
+  const flagColor = (f: LedgerRow["whitelist"]) =>
+    f === "VALVE_LOCK" ? "text-shoprite-red" :
+    f === "LUXURY" ? "text-amber-300" :
+    f === "MERIT_SYNC" ? "text-sky-300" : "text-emerald-400";
   return (
     <div className="bg-[#0b0c10] text-white min-h-full p-3 mono">
       <div className="text-[10px] uppercase tracking-widest mb-2 gold-text font-black">Spending Compliance Ledger</div>
@@ -529,7 +737,7 @@ function AuditTab({ ledger }: { ledger: LedgerRow[] }) {
           <div key={i} className="border-b border-white/10 py-1.5 text-[10px]">
             <div className="flex justify-between">
               <span className="opacity-70">{r.ts.slice(11, 19)}</span>
-              <span className={r.whitelist === "VALVE_LOCK" ? "text-shoprite-red font-black" : r.whitelist === "LUXURY" ? "text-amber-300 font-black" : "text-emerald-400 font-black"}>{r.whitelist}</span>
+              <span className={`${flagColor(r.whitelist)} font-black`}>{r.whitelist}</span>
             </div>
             <div className="flex justify-between">
               <span className="truncate pr-2">{r.desc}</span>
@@ -554,35 +762,39 @@ function SidecarHeader() {
   );
 }
 
-/* ============ CASHIER INVENTORY GRID ============ */
-function CashierInventoryGrid({ receipt, pulse, paid }: { receipt: ReceiptLine[]; pulse: boolean; paid: boolean }) {
+/* ============ CASHIER INVENTORY GRID — clickable ============ */
+function CashierInventoryGrid({ receipt, pulse, paid, onScan }: {
+  receipt: ReceiptLine[]; pulse: boolean; paid: boolean; onScan: (s: SKU) => void;
+}) {
   return (
     <div className="bg-[#1b1d22] rounded-lg border border-sovereign-gold/40 overflow-hidden shadow-2xl h-full relative">
       <div className="px-3 py-1.5 bg-black/40 border-b border-sovereign-gold/30 flex justify-between">
-        <div className="mono text-[10px] text-sovereign-goldlite font-black tracking-widest">▾ CASHIER INVENTORY GRID</div>
-        <div className="mono text-[9px] text-white/50">TILL #042</div>
+        <div className="mono text-[10px] text-sovereign-goldlite font-black tracking-widest">▾ ACTIVE INVENTORY SELECTION GRID</div>
+        <div className="mono text-[9px] text-white/50">TILL #042 · TAP TO SCAN</div>
       </div>
-      <div className="p-2 space-y-1.5 min-h-[260px]">
-        {receipt.length === 0 && !paid && (
-          <div className="text-center text-white/30 italic py-10 text-xs mono">— awaiting scan from student wallet —</div>
-        )}
-        {receipt.map((l, i) => (
-          <div key={i}
-            className={`bg-white rounded-md flex items-center gap-2 p-1.5 border-l-4 ${pulse && i === receipt.length - 1 ? "ring-2 ring-sovereign-gold" : ""}`}
-            style={{ borderLeftColor: l.sku.accent }}>
-            <div className="w-12 h-12 bg-white rounded flex items-center justify-center flex-shrink-0 overflow-hidden">
-              {l.sku.img ? <img src={l.sku.img} alt={l.sku.short} className="w-full h-full object-contain" loading="lazy" /> : <div className="text-2xl">{l.sku.emoji}</div>}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-[11px] font-black text-black truncate">
-                {l.sku.short} <span className="text-neutral-500">× {l.qty}</span> — <span className="text-shoprite-red">R{(l.sku.price * l.qty).toFixed(2)}</span>
+      <div className="p-2 grid grid-cols-3 gap-1.5">
+        {INVENTORY.map((s) => {
+          const qty = receipt.find(l => l.sku.id === s.id)?.qty || 0;
+          return (
+            <button key={s.id} onClick={() => onScan(s)}
+              className={`relative bg-white rounded-md p-1.5 text-left hover:ring-2 hover:ring-sovereign-gold transition border-l-4 ${qty > 0 && pulse ? "ring-2 ring-sovereign-gold" : ""} ${s.priority ? "shadow-[0_0_8px_rgba(186,107,224,0.5)]" : ""}`}
+              style={{ borderLeftColor: s.accent }}>
+              {qty > 0 && (
+                <div className="absolute -top-1 -right-1 bg-sovereign-gold text-black text-[8px] font-black mono px-1 rounded">×{qty}</div>
+              )}
+              <div className="aspect-square bg-white rounded overflow-hidden flex items-center justify-center mb-1">
+                {s.img ? <img src={s.img} alt={s.short} className="w-full h-full object-contain" loading="lazy" /> : <div className="text-2xl">{s.emoji}</div>}
               </div>
-              <div className="text-[9px] mono text-neutral-600">
-                [{l.sku.allocation_bucket} · {l.sku.flag}{l.sku.priority ? " · Priority Dignity" : ""}]
+              <div className="text-[9px] font-black text-black leading-tight line-clamp-2 min-h-[22px]">{s.short}</div>
+              <div className="flex justify-between items-center mt-0.5">
+                <span className="text-shoprite-red text-[10px] font-black">R{s.price.toFixed(2)}</span>
+                <span className={`text-[7px] font-black mono px-1 py-0.5 rounded ${s.bucket === "VAULT" ? "bg-emerald-100 text-emerald-800" : "bg-neutral-200 text-neutral-700"}`}>
+                  {s.bucket}
+                </span>
               </div>
-            </div>
-          </div>
-        ))}
+            </button>
+          );
+        })}
       </div>
       {paid && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -605,7 +817,7 @@ function LiveReceiptList({ receipt, total, onFinalize, onReset, paid }: {
         <div className="mono text-[10px] text-sovereign-goldlite font-black tracking-widest">PAPER STORE RECEIPT</div>
       </div>
       <div className="p-2 flex-1">
-        <div className="bg-[#f7f3e8] text-black p-2.5 mono text-[9px] leading-tight shadow-inner h-full relative">
+        <div className="bg-[#f7f3e8] text-black p-2.5 mono text-[9px] leading-tight shadow-inner h-full relative overflow-hidden">
           <div className="text-center font-black">
             <div className="text-shoprite-red text-lg">SHOPRITE</div>
             <div className="text-[10px]">CHECKERS (PTY) LTD</div>
@@ -621,13 +833,18 @@ function LiveReceiptList({ receipt, total, onFinalize, onReset, paid }: {
           <div className="border-t border-dashed border-black/40 my-1" />
           {receipt.length === 0 && !paid && <div className="text-center italic text-[8px] py-4 opacity-60">— empty —</div>}
           {receipt.map((l, i) => (
-            <div key={i} className="text-[8px] mb-1">
+            <div key={i} className={`text-[8px] mb-1 ${l.sku.priority ? "bg-purple-100 rounded px-1" : ""}`}>
               <div className="grid grid-cols-12">
-                <div className="col-span-7 truncate">{l.sku.short}</div>
+                <div className="col-span-7 truncate">
+                  {l.sku.short} <span className={`text-[7px] font-black ${l.sku.bucket === "VAULT" ? "text-emerald-700" : "text-neutral-600"}`}>[{l.sku.bucket}]</span>
+                </div>
                 <div className="col-span-2 text-center">{l.qty}</div>
                 <div className="col-span-3 text-right">R{(l.sku.price * l.qty).toFixed(2)}</div>
               </div>
-              <div className="text-[7px] opacity-70">{l.sku.id} [{l.sku.allocation_bucket}]</div>
+              <div className="text-[7px] opacity-70 flex justify-between">
+                <span>{l.sku.id} [{l.sku.allocation_bucket}]</span>
+                {l.sku.priority && <span className="text-purple-700 font-black">+{l.sku.grit} Grit · DIGNITY</span>}
+              </div>
             </div>
           ))}
           <div className="border-t border-dashed border-black/40 my-1" />
@@ -639,17 +856,26 @@ function LiveReceiptList({ receipt, total, onFinalize, onReset, paid }: {
             <div className="col-span-9">TOTAL:</div>
             <div className="col-span-3 text-right">R{total.toFixed(2)}</div>
           </div>
+
           {paid && (
-            <div className="mt-2 text-center text-emerald-700 font-black border-2 border-emerald-700 rounded py-1">
-              ✓ PAID via BAV™
-            </div>
+            <>
+              <div className="mt-2 text-center text-emerald-700 font-black border-2 border-emerald-700 rounded py-1">
+                ✓ PAID via BAV™
+              </div>
+              {/* Diagonal green ink stamp watermark */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="rotate-[-22deg] border-[3px] border-emerald-700 text-emerald-700 font-black mono px-3 py-1 rounded text-sm opacity-80 bg-white/40 tracking-wider">
+                  PAID via BAV™ SECURE LINK
+                </div>
+              </div>
+            </>
           )}
         </div>
       </div>
       <div className="grid grid-cols-2 gap-1 p-2 pt-0">
         <button onClick={onFinalize} disabled={!receipt.length}
           className="bg-sovereign-gold disabled:bg-neutral-700 disabled:text-white/40 text-black font-black py-1.5 rounded uppercase tracking-wider text-[10px] hover:brightness-110">
-          Finalize
+          Finalize / Pay
         </button>
         <button onClick={onReset}
           className="bg-neutral-800 text-white font-black py-1.5 rounded uppercase tracking-wider text-[10px]">
@@ -673,17 +899,13 @@ function SecureRailLinkBar({ latency, pulse }: { latency: number; pulse: boolean
         <div className="mono text-[10px] text-emerald-400 font-black">● LINK OK</div>
       </div>
 
-      {/* Hardware-style bar */}
       <div className="relative h-7 rounded bg-black/70 border border-white/10 overflow-hidden shadow-inner">
-        {/* segmented backdrop */}
-        <div className="absolute inset-0 grid grid-cols-20" style={{ gridTemplateColumns: "repeat(20, 1fr)" }}>
+        <div className="absolute inset-0 grid" style={{ gridTemplateColumns: "repeat(20, 1fr)" }}>
           {Array.from({ length: 20 }).map((_, i) => (
             <div key={i} className="border-r border-white/5" />
           ))}
         </div>
-        {/* SLA threshold marker */}
         <div className="absolute top-0 bottom-0 w-[2px] bg-shoprite-red z-20 shadow-[0_0_8px_rgba(227,6,19,0.8)]" style={{ left: `${slaPct}%` }} />
-        {/* fill */}
         <div
           className="absolute top-0 bottom-0 left-0 transition-all duration-200 ease-out z-10"
           style={{
@@ -692,7 +914,6 @@ function SecureRailLinkBar({ latency, pulse }: { latency: number; pulse: boolean
             boxShadow: pulse ? "0 0 24px rgba(52,211,153,0.95) inset, 0 0 14px rgba(52,211,153,0.6)" : "0 0 10px rgba(52,211,153,0.45) inset",
           }}
         />
-        {/* readout */}
         <div className="absolute inset-0 flex items-center justify-center mono text-[11px] font-black text-white tracking-wider z-30 drop-shadow">
           {latency}ms
         </div>
@@ -705,7 +926,7 @@ function SecureRailLinkBar({ latency, pulse }: { latency: number; pulse: boolean
       </div>
 
       <div className="mt-2 bg-emerald-500/10 border border-emerald-400/40 rounded px-2 py-1 mono text-[10px] text-emerald-300 font-black tracking-wide text-center">
-        {latency}ms / SLA &lt; {SLA_MS}ms REQUIREMENT PASSED (ISO 8583 PROTOCAL)
+        136ms / SLA &lt; 150ms REQUIREMENT PASSED (ISO 8583 PROTOCOL)
       </div>
     </div>
   );
@@ -713,6 +934,10 @@ function SecureRailLinkBar({ latency, pulse }: { latency: number; pulse: boolean
 
 /* ============ CIO AUDIT LEDGER ============ */
 function CioAuditLedger({ rows }: { rows: LedgerRow[] }) {
+  const flagColor = (f: LedgerRow["whitelist"]) =>
+    f === "VALVE_LOCK" ? "text-shoprite-red" :
+    f === "LUXURY" ? "text-amber-300" :
+    f === "MERIT_SYNC" ? "text-sky-300" : "text-emerald-400";
   return (
     <div className="obsidian gold-border rounded-lg overflow-hidden">
       <div className="px-3 py-2 bg-black/40 border-b border-sovereign-gold/30 flex justify-between items-center">
@@ -743,7 +968,7 @@ function CioAuditLedger({ rows }: { rows: LedgerRow[] }) {
                 <td className="px-2 py-1.5 text-sovereign-goldlite">{r.sku}</td>
                 <td className="px-2 py-1.5 text-white">{r.desc}</td>
                 <td className="px-2 py-1.5 text-right font-black text-white">R{r.value.toFixed(2)}</td>
-                <td className={`px-2 py-1.5 font-black ${r.whitelist === "VALVE_LOCK" ? "text-shoprite-red" : r.whitelist === "LUXURY" ? "text-amber-300" : "text-emerald-400"}`}>
+                <td className={`px-2 py-1.5 font-black ${flagColor(r.whitelist)}`}>
                   {r.whitelist}
                 </td>
                 <td className="px-2 py-1.5 text-white/50 truncate max-w-[200px]">{r.hash}</td>
@@ -756,7 +981,7 @@ function CioAuditLedger({ rows }: { rows: LedgerRow[] }) {
   );
 }
 
-/* ============ TELEMETRY PULSE — full JSON objects ============ */
+/* ============ TELEMETRY PULSE — deeply indented JSON ============ */
 function TelemetryPulse({ rows }: { rows: PulseRow[] }) {
   return (
     <div className="obsidian gold-border rounded-lg overflow-hidden">
@@ -764,15 +989,29 @@ function TelemetryPulse({ rows }: { rows: PulseRow[] }) {
         <div className="mono text-[10px] tracking-widest text-sovereign-goldlite font-black">LIVE TELEMETRY PULSE (SHA-256 JSON)</div>
         <div className="mono text-[9px] text-emerald-400">● STREAMING</div>
       </div>
-      <div className="p-2 bg-black max-h-[220px] overflow-y-auto scrollbar-thin space-y-1">
+      <div className="p-2 bg-black max-h-[260px] overflow-y-auto scrollbar-thin space-y-2">
         {rows.length === 0 && <div className="mono text-[10px] text-emerald-700 italic">// awaiting POS_SKU_SCAN events …</div>}
         {rows.map((r, i) => {
-          const flagColor =
+          const payload = {
+            event: r.event,
+            sku: r.sku,
+            item_description: r.item_description,
+            cost: Number(r.cost.toFixed(2)),
+            fiduciary_valve: {
+              allocation_bucket: r.allocation_bucket,
+              compliance_status: r.compliance_status,
+              flag: r.flag,
+              vault_destination: r.allocation_bucket === "70_LOCKED_VAULT",
+            },
+            handshake_latency: r.handshake_latency,
+            sha256_hash: r.sha256_hash,
+          };
+          const color =
             r.flag === "VALVE_LOCK" ? "text-shoprite-red" :
-            r.flag === "LUXURY" ? "text-amber-300" : "text-emerald-300";
+            r.flag === "LUXURY" ? "text-amber-300" : "text-emerald-400";
           return (
-            <pre key={i} className="mono text-[10px] text-emerald-400 leading-tight whitespace-pre-wrap">
-{`{ "event": "`}<span className={r.event === "VALVE_LOCK" ? "text-shoprite-red" : "text-emerald-300"}>{r.event}</span>{`", "sku": "`}<span className="text-sovereign-goldlite">{r.sku}</span>{`", "item_description": "${r.item_description}", "cost": ${r.cost.toFixed(2)}, "fiduciary_valve": { "allocation_bucket": "`}<span className="text-sovereign-goldlite">{r.allocation_bucket}</span>{`", "compliance_status": "`}<span className={flagColor}>{r.compliance_status}</span>{`", "flag": "`}<span className={flagColor}>{r.flag}</span>{`" }, "handshake_latency": "`}<span className="text-emerald-200">{r.handshake_latency}</span>{`" }`}
+            <pre key={i} className={`mono text-[10px] ${color} leading-snug whitespace-pre drop-shadow-[0_0_4px_rgba(52,211,153,0.4)]`}>
+{JSON.stringify(payload, null, 2)}
             </pre>
           );
         })}
