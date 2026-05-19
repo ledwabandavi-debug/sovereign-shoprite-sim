@@ -56,8 +56,12 @@ const DID_YOU_KNOW = [
 ];
 
 const WHATSAPP_INSIGHTS = [
-  { from: "Shoprite Alert", body: "10kg Rice is on special. Optimizing your 70% Vault adds +10 Grit points today.", time: "08:14" },
-  { from: "Shoprite Booster", body: "Hi Refilwe, Shoprite has a 'Booster Monday' special on Full Cream Milk. Buying this today optimizes your 70% Vault and adds +5 Grit points.", time: "08:42" },
+  { from: "Shoprite Alert · Sea Point", body: "🛒 Ritebrand Maize Meal 10kg marked down R12.00 — Vault-eligible. Routing via BAV™ rail.", time: "08:14" },
+  { from: "Sixty60 Booster", body: "Hi Refilwe — Full Cream Milk 1L is on Booster Monday. +5 Grit if routed via your 70% Vault.", time: "08:42" },
+  { from: "POS Discount Log · Till #042", body: "📉 Albany White Bread auto-markdown logged: R19.99 → R16.49. Allocation: 70_LOCKED_VAULT.", time: "09:03" },
+  { from: "Shoprite Xtra Savings", body: "⚡ Stayfree 10pk Dignity Protocol coupon clipped automatically. Vault preserved.", time: "09:21" },
+  { from: "BAV™ Ecosystem", body: "Nulaid Eggs 18pk discount detected at your local store · ETA Sixty60: 47 min.", time: "09:38" },
+  { from: "POS Discount Log · Till #042", body: "📉 Tastic Rice 2kg pricedrop verified — ledger hash notarised.", time: "09:55" },
 ];
 
 /* ============ AUDIO ============ */
