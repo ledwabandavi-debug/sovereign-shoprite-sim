@@ -204,6 +204,19 @@ export default function App() {
     if (receipt.length === 0) return;
     const vaultSpend = receipt.filter((l) => l.sku.bucket === "VAULT").reduce((s, l) => s + l.sku.price * l.qty, 0);
     const flexSpend = receipt.filter((l) => l.sku.bucket === "FLEX").reduce((s, l) => s + l.sku.price * l.qty, 0);
+    if (flexSpend > FLEX_INIT) {
+      buzz();
+      setFlexOverflow(true);
+      setViolation(true);
+      flashFX();
+      setTelemetry((T) => [{
+        event: "VALVE_LOCK" as const, sku: "GOV_CONSTRAINT", item_description: "Flex pool exceeded R495.00 threshold",
+        cost: flexSpend, allocation_bucket: "30_DYNAMIC_FLEX", compliance_status: "GOVERNANCE_CONSTRAINT_TRIGGERED",
+        flag: "VALVE_LOCK", handshake_latency: `${TARGET_MS}ms`, sha256_hash: sha256Token(),
+      }, ...T].slice(0, 14));
+      setTimeout(() => { setFlexOverflow(false); setViolation(false); }, 5000);
+      return;
+    }
     setVault((v) => Math.max(0, v - vaultSpend));
     setFlex((f) => Math.max(0, f - flexSpend));
     setGrit((g) => g + Math.min(20, receipt.reduce((s, l) => s + Math.max(0, l.sku.grit) * l.qty, 0)));
