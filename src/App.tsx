@@ -50,9 +50,9 @@ const SLA_MS = 150;
 const TARGET_MS = 136;
 
 const DID_YOU_KNOW = [
-  "Did You Know? Maintaining a consistent nutritional basket for 3 consecutive months increases your Grit Score™ by 50 points, pre-qualifying you for Graduate Tech Loans.",
-  "Did You Know? Academic excellence is a behavioral asset. Syncing a 'Pass' result in your Proof of Merit portal triggers an immediate +100 Grit Multiplier.",
-  "Did You Know? Your Grit Score™ serves as your Verified Financial CV. Banks like FNB and Sanlam use this data to waive deposit requirements for your first vehicle.",
+  "Did You Know? Maintaining a consistent nutritional basket for 3 consecutive months increases your Grit Score™ by 50 points, pre-qualifying you for Graduate Tech Loans at FNB.",
+  "Did You Know? Your compiled Grit Score™ serves as a Verified Financial CV. Institutions use this data to waive deposit requirements for your first asset acquisition.",
+  "Did You Know? Reaching a Grit Score™ of 750 permanently unlocks Free Sixty60 Delivery, funded via institutional loyalty rollovers.",
 ];
 
 const WHATSAPP_INSIGHTS = [
