@@ -495,32 +495,44 @@ function DidYouKnowCarousel() {
   );
 }
 
-/* ---------- WhatsApp Insights Hub ---------- */
+/* ---------- WhatsApp Discount Notifications Hub ---------- */
 function WhatsAppHub() {
-  const [on, setOn] = useState(true);
+  const [feed, setFeed] = useState(WHATSAPP_INSIGHTS.slice(0, 3));
+  useEffect(() => {
+    let i = 3;
+    const id = setInterval(() => {
+      const next = WHATSAPP_INSIGHTS[i % WHATSAPP_INSIGHTS.length];
+      i++;
+      setFeed((f) => [next, ...f].slice(0, 4));
+    }, 3500);
+    return () => clearInterval(id);
+  }, []);
   return (
-    <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
+    <div className="bg-white rounded-xl border-2 border-[#075E54] overflow-hidden shadow-[0_0_0_1px_rgba(7,94,84,0.4),0_6px_18px_rgba(7,94,84,0.25)]">
       <div className="flex items-center justify-between px-3 py-2 bg-[#075E54] text-white">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-full bg-[#25D366] flex items-center justify-center text-[12px] font-black">W</div>
-          <div className="text-[11px] font-black">WhatsApp Insights Hub</div>
+          <div className="text-[11px] font-black leading-tight">
+            WhatsApp Discount<br/>Notification Hub
+          </div>
         </div>
-        <button onClick={() => setOn(!on)}
-          className={`relative w-9 h-5 rounded-full transition ${on ? "bg-[#25D366]" : "bg-neutral-400"}`}>
-          <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition ${on ? "left-4" : "left-0.5"}`} />
-        </button>
+        <div className="flex items-center gap-1 bg-[#0b3d36] border border-[#25D366] px-1.5 py-0.5 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] led shadow-[0_0_6px_rgba(37,211,102,0.95)]" />
+          <span className="mono text-[7px] font-black text-[#9af0c2] tracking-widest">LIVE ECOSYSTEM CONNECTED</span>
+        </div>
       </div>
-      {on && (
-        <div className="p-2 bg-[#ECE5DD] space-y-1.5">
-          {WHATSAPP_INSIGHTS.map((m, i) => (
-            <div key={i} className="bg-white rounded-lg rounded-tl-none p-2 shadow text-[10px] text-black max-w-[90%]">
-              <div className="font-black text-[#075E54] text-[9px]">{m.from}</div>
-              <div className="leading-snug">{m.body}</div>
-              <div className="text-right text-[7px] text-neutral-500 mt-0.5">{m.time} ✓✓</div>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="p-2 bg-[#ECE5DD] space-y-1.5 max-h-[170px] overflow-hidden">
+        {feed.map((m, i) => (
+          <div key={`${m.time}-${i}`} className="bg-white rounded-lg rounded-tl-none p-2 shadow text-[10px] text-black max-w-[92%] border-l-2 border-[#075E54]">
+            <div className="font-black text-[#075E54] text-[9px]">{m.from}</div>
+            <div className="leading-snug">{m.body}</div>
+            <div className="text-right text-[7px] text-neutral-500 mt-0.5">{m.time} ✓✓</div>
+          </div>
+        ))}
+      </div>
+      <div className="bg-[#0b3d36] text-[#9af0c2] mono text-[8px] font-black px-3 py-1 text-center tracking-widest">
+        ROUTED VIA BAV™ FRAMEWORK · POS DISCOUNT LOGS LIVE
+      </div>
     </div>
   );
 }
