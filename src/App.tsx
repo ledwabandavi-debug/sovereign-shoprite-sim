@@ -478,6 +478,7 @@ function HomeTab({ vault, flex, grit }: { vault: number; flex: number; grit: num
         </div>
       </div>
 
+      <div className="px-3 pt-3"><XtraSavingsCard /></div>
       <DidYouKnowCarousel />
 
       <div className="p-3 space-y-3">
