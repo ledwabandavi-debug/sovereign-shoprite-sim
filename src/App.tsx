@@ -681,10 +681,15 @@ function Sixty60Tab({ onScan, grit }: { onScan: (s: SKU) => void; grit: number }
   const gritPct = Math.min(100, (grit / 750) * 100);
   return (
     <div className="bg-white min-h-full">
-      <div className="bg-sixty60 text-white px-3 py-2.5 flex items-center gap-2">
-        <div className="bg-white text-sixty60 font-black px-2 py-0.5 rounded text-sm tracking-tight">Sixty<span className="text-shoprite-yellow">60</span></div>
-        <div className="text-[10px] font-black uppercase tracking-wide">Delivered in 60 minutes</div>
-        <span className="ml-auto text-[9px] mono opacity-80">⌖ Cape Town</span>
+      <div className="bg-gradient-to-r from-[#001F4D] via-[#0a2a5e] to-[#001F4D] text-white px-3 py-3 flex items-center gap-2 border-b-2 border-[#00E5FF] shadow-[0_4px_18px_rgba(0,229,255,0.25)]">
+        <div className="bg-white px-2 py-0.5 rounded-md text-lg tracking-tighter font-black leading-none flex items-baseline" style={{ fontFamily: "'Inter', sans-serif" }}>
+          <span className="text-[#0a2a5e]">Sixty</span><span className="text-[#00B8D4] drop-shadow-[0_0_4px_rgba(0,229,255,0.7)]">60</span>
+        </div>
+        <div className="text-[10px] font-black uppercase tracking-[0.15em] text-cyan-200">Delivered in 60 minutes</div>
+        <span className="ml-auto flex items-center gap-1 text-[9px] mono text-cyan-300">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-300 led shadow-[0_0_6px_rgba(0,229,255,0.9)]" />
+          ⌖ Cape Town
+        </span>
       </div>
 
       {/* Dynamic Delivery Logistics Banner */}
