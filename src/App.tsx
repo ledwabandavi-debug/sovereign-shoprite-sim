@@ -50,9 +50,9 @@ const SLA_MS = 150;
 const TARGET_MS = 136;
 
 const DID_YOU_KNOW = [
-  "Did You Know? Maintaining a consistent nutritional basket for 3 consecutive months increases your Grit Score™ by 50 points, pre-qualifying you for Graduate Tech Loans.",
-  "Did You Know? Academic excellence is a behavioral asset. Syncing a 'Pass' result in your Proof of Merit portal triggers an immediate +100 Grit Multiplier.",
-  "Did You Know? Your Grit Score™ serves as your Verified Financial CV. Banks like FNB and Sanlam use this data to waive deposit requirements for your first vehicle.",
+  "Did You Know? Maintaining a consistent nutritional basket for 3 consecutive months increases your Grit Score™ by 50 points, pre-qualifying you for Graduate Tech Loans at FNB.",
+  "Did You Know? Your compiled Grit Score™ serves as a Verified Financial CV. Institutions use this data to waive deposit requirements for your first asset acquisition.",
+  "Did You Know? Reaching a Grit Score™ of 750 permanently unlocks Free Sixty60 Delivery, funded via institutional loyalty rollovers.",
 ];
 
 const WHATSAPP_INSIGHTS = [
@@ -289,6 +289,8 @@ export default function App() {
           <TelemetryPulse rows={telemetry} />
 
           <CioAuditLedger rows={ledger} />
+
+          <FinancialCvPanel grit={grit} vault={vault} flex={flex} ledger={ledger} />
         </section>
       </div>
 
@@ -366,7 +368,7 @@ function StudentPhone({
             )}
             {tab === "Home" && <HomeTab vault={vault} flex={flex} grit={grit} />}
             {tab === "Shop" && <ShopTab onScan={onScan} receipt={receipt} />}
-            {tab === "Sixty60" && <Sixty60Tab onScan={onScan} />}
+            {tab === "Sixty60" && <Sixty60Tab onScan={onScan} grit={grit} />}
             {tab === "Merit" && <MeritTab grit={grit} onSync={onMeritSync} />}
             {tab === "Audit" && <AuditTab ledger={ledger} />}
 
@@ -403,6 +405,61 @@ function StudentPhone({
             ))}
           </nav>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Xtra Savings Card (flippable) ---------- */
+function XtraSavingsCard() {
+  const [flipped, setFlipped] = useState(false);
+  return (
+    <div className="space-y-1.5">
+      <button onClick={() => setFlipped(f => !f)}
+        className="relative w-full aspect-[1.6/1] rounded-xl overflow-hidden shadow-[0_8px_24px_rgba(91,33,182,0.45)] transition-transform hover:scale-[1.01]"
+        style={{ perspective: "800px" }}>
+        <div className="relative w-full h-full transition-transform duration-500" style={{ transformStyle: "preserve-3d", transform: flipped ? "rotateY(180deg)" : "none" }}>
+          {/* FRONT */}
+          <div className="absolute inset-0 p-3 flex flex-col justify-between text-white"
+            style={{
+              backfaceVisibility: "hidden",
+              background: "linear-gradient(135deg, #4c1d95 0%, #6d28d9 45%, #2e1065 100%)",
+            }}>
+            <div className="flex justify-between items-start">
+              <div className="bg-shoprite-red text-white text-[8px] font-black px-1.5 py-0.5 rounded mono">SHOPRITE</div>
+              <div className="text-[7px] mono opacity-70">XSV · ZA</div>
+            </div>
+            <div className="flex items-end justify-between">
+              <div className="leading-none text-left">
+                <div className="text-[40px] font-black tracking-tighter" style={{ color: "#FFD200", textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}>X</div>
+                <div className="text-[10px] font-black tracking-widest">TRA SAVINGS</div>
+              </div>
+              <div className="text-right">
+                <div className="text-[8px] mono opacity-70">4354 4757 4757 5757</div>
+                <div className="text-[8px] mono opacity-90 font-black">R. MOKOENA</div>
+              </div>
+            </div>
+          </div>
+          {/* BACK */}
+          <div className="absolute inset-0 p-3 flex flex-col justify-center text-white"
+            style={{
+              backfaceVisibility: "hidden",
+              transform: "rotateY(180deg)",
+              background: "linear-gradient(135deg, #2e1065 0%, #4c1d95 100%)",
+            }}>
+            <div className="text-[9px] font-black uppercase tracking-widest text-shoprite-yellow mb-1">Core Utility</div>
+            <div className="text-[11px] leading-snug font-medium">
+              Tracks behavioral nutritional metrics to protect statutory NSFAS capital while unlocking local grocery discounts.
+            </div>
+            <div className="text-[8px] mono opacity-70 mt-2">Tap to flip back</div>
+          </div>
+        </div>
+      </button>
+      <div className="flex items-center gap-1.5 px-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 led shadow-[0_0_6px_rgba(52,211,153,0.9)]" />
+        <span className="text-[8px] mono font-black text-purple-800 leading-tight">
+          Xtra Savings Card Active — Routing Identity Token via Secure BAV™ Valve
+        </span>
       </div>
     </div>
   );
@@ -478,6 +535,7 @@ function HomeTab({ vault, flex, grit }: { vault: number; flex: number; grit: num
         </div>
       </div>
 
+      <div className="px-3 pt-3"><XtraSavingsCard /></div>
       <DidYouKnowCarousel />
 
       <div className="p-3 space-y-3">
@@ -596,20 +654,42 @@ function ProductCard({ s, onScan, qty }: { s: SKU; onScan: (s: SKU) => void; qty
 }
 
 /* ---------- Sixty60 Tab (categorized hyper-real grid) ---------- */
-function Sixty60Tab({ onScan }: { onScan: (s: SKU) => void }) {
+function Sixty60Tab({ onScan, grit }: { onScan: (s: SKU) => void; grit: number }) {
   const cats: Category[] = ["Nutritional Staples", "Girl Child Protocol", "Discretionary"];
   const catMeta: Record<Category, { tag: string; color: string }> = {
     "Nutritional Staples": { tag: "Locked Vault Eligible", color: "bg-emerald-500" },
     "Girl Child Protocol": { tag: "Super-Essential · Dignity", color: "bg-purple-500" },
     "Discretionary": { tag: "Flex Wallet Only", color: "bg-neutral-500" },
   };
+  const freeDelivery = grit >= 750;
+  const gritPct = Math.min(100, (grit / 750) * 100);
   return (
     <div className="bg-white min-h-full">
-      <div className="bg-shoprite-red text-white px-3 py-2 flex items-center gap-2">
-        <div className="bg-white text-shoprite-red font-black px-2 py-0.5 rounded text-sm">Sixty<span className="text-shoprite-yellow">60</span></div>
-        <div className="text-[10px] font-black">Delivered in 60 minutes</div>
-        <span className="ml-auto text-[9px] mono opacity-80">Ritebrand · BAV™ Linked</span>
+      <div className="bg-sixty60 text-white px-3 py-2.5 flex items-center gap-2">
+        <div className="bg-white text-sixty60 font-black px-2 py-0.5 rounded text-sm tracking-tight">Sixty<span className="text-shoprite-yellow">60</span></div>
+        <div className="text-[10px] font-black uppercase tracking-wide">Delivered in 60 minutes</div>
+        <span className="ml-auto text-[9px] mono opacity-80">⌖ Cape Town</span>
       </div>
+
+      {/* Dynamic Delivery Logistics Banner */}
+      {freeDelivery ? (
+        <div className="mx-2 mt-2 rounded-lg px-3 py-2 border-2 border-emerald-400 bg-gradient-to-r from-emerald-500/90 to-emerald-400 text-black shadow-[0_0_18px_rgba(52,211,153,0.7)]">
+          <div className="text-[10px] font-black uppercase tracking-wider">⚡ BAV™ Reward Unlocked</div>
+          <div className="text-[11px] font-black">FREE SIXTY60 DELIVERY ACTIVE</div>
+        </div>
+      ) : (
+        <div className="mx-2 mt-2 rounded-lg px-3 py-2 border border-sixty60/30 bg-sixty60/5">
+          <div className="flex justify-between text-[10px] font-black text-sixty60">
+            <span>Sixty60 Delivery Fee: R35.00</span>
+            <span className="mono">{grit} / 750</span>
+          </div>
+          <div className="h-1.5 rounded-full bg-neutral-200 mt-1 overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-sixty60 to-shoprite-red transition-all" style={{ width: `${gritPct}%` }} />
+          </div>
+          <div className="text-[9px] text-neutral-600 mt-1">Grit Score under 750 — Earn points to unlock FREE Delivery</div>
+        </div>
+      )}
+
       <div className="p-2 space-y-3">
         {cats.map((cat) => (
           <div key={cat}>
@@ -929,6 +1009,101 @@ function SecureRailLinkBar({ latency, pulse }: { latency: number; pulse: boolean
         136ms / SLA &lt; 150ms REQUIREMENT PASSED (ISO 8583 PROTOCOL)
       </div>
     </div>
+  );
+}
+
+/* ============ FINANCIAL CV PANEL ============ */
+function FinancialCvPanel({ grit, vault, flex, ledger }: { grit: number; vault: number; flex: number; ledger: LedgerRow[] }) {
+  const [open, setOpen] = useState(false);
+  const vaultAdherence = ((vault / VAULT_INIT) * 100).toFixed(1);
+  const issued = new Date().toISOString().slice(0, 19).replace("T", " ") + " UTC";
+
+  function downloadHtml() {
+    const html = document.getElementById("bav-cv-doc")?.outerHTML || "";
+    const blob = new Blob([
+      `<!doctype html><html><head><meta charset="utf-8"><title>BAV CV - Refilwe Mokoena</title>
+       <style>body{font-family:Georgia,serif;background:#f3efe6;padding:32px;color:#111}
+       .doc{max-width:780px;margin:auto;background:#fffaf0;border:1px solid #c5a059;padding:32px;box-shadow:0 6px 24px rgba(0,0,0,0.15)}
+       h1{color:#8c6f33;letter-spacing:1px;margin:0} h2{color:#8c6f33;border-bottom:1px solid #c5a059;padding-bottom:4px;margin-top:24px}
+       table{width:100%;border-collapse:collapse;margin-top:8px} td{padding:6px 4px;border-bottom:1px dotted #c5a059;font-size:13px}
+       .badge{display:inline-block;padding:4px 10px;border-radius:4px;background:#065f46;color:#fff;font-weight:900;font-size:12px;letter-spacing:1px}</style>
+       </head><body>${html}</body></html>`,
+    ], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "BAV_Behavioral_Financial_CV_RMokoena.html"; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  return (
+    <>
+      <div className="obsidian gold-border rounded-lg p-3 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        <div>
+          <div className="mono text-[10px] tracking-widest gold-text font-black">BANKABLE OUTPUT MODULE</div>
+          <div className="text-[11px] text-white/70 mt-0.5">Compile and export the verified Behavioral Actuarial Asset Dossier as a bankable PDF proof.</div>
+        </div>
+        <button onClick={() => setOpen(true)}
+          className="bg-gradient-to-b from-sovereign-goldlite via-sovereign-gold to-[#8c6f33] text-black font-black py-2.5 px-4 rounded-md uppercase tracking-wider text-[11px] shadow-[0_4px_14px_rgba(197,160,89,0.55)] hover:brightness-110 whitespace-nowrap">
+          📄 Download Behavioral Financial CV (PDF Proof)
+        </button>
+      </div>
+
+      {open && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-[#fffaf0] text-black rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border-2 border-sovereign-gold">
+            <div className="bg-black px-4 py-2 flex justify-between items-center sticky top-0 z-10">
+              <div className="gold-text font-black mono text-[11px] tracking-widest">BAV™ CV PREVIEW · BANKABLE PROOF</div>
+              <div className="flex gap-2">
+                <button onClick={downloadHtml} className="bg-sovereign-gold text-black font-black text-[10px] uppercase px-3 py-1 rounded">⤓ Download</button>
+                <button onClick={() => setOpen(false)} className="bg-shoprite-red text-white font-black text-[10px] uppercase px-3 py-1 rounded">Close</button>
+              </div>
+            </div>
+            <div id="bav-cv-doc" className="doc p-8" style={{ fontFamily: "Georgia, serif" }}>
+              <div style={{ textAlign: "center", borderBottom: "2px solid #c5a059", paddingBottom: 12, marginBottom: 16 }}>
+                <h1 style={{ fontSize: 22, color: "#8c6f33", margin: 0, letterSpacing: 1 }}>BAV™ Behavioral Actuarial Asset Dossier</h1>
+                <div style={{ fontSize: 11, color: "#555", marginTop: 4, fontFamily: "JetBrains Mono, monospace" }}>
+                  Issued: {issued} · Authority: Sovereign Fiduciary Engine
+                </div>
+              </div>
+
+              <h2 style={{ color: "#8c6f33", fontSize: 14, borderBottom: "1px solid #c5a059", paddingBottom: 4, marginTop: 0 }}>Subject Profile</h2>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <tbody>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Full Name</b></td><td style={{ padding: 6, fontSize: 13 }}>Refilwe Mokoena</td></tr>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Verified NSFAS Edge Node ID</b></td><td style={{ padding: 6, fontSize: 13, fontFamily: "JetBrains Mono, monospace" }}>BAV_ST_001</td></tr>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Cohort</b></td><td style={{ padding: 6, fontSize: 13 }}>Tier-1 University · NSFAS Statutory Beneficiary</td></tr>
+                </tbody>
+              </table>
+
+              <h2 style={{ color: "#8c6f33", fontSize: 14, borderBottom: "1px solid #c5a059", paddingBottom: 4, marginTop: 20 }}>Live Behavioral Metrics</h2>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <tbody>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Current Grit Score™ Rating</b></td><td style={{ padding: 6, fontSize: 13 }}>{grit} / 1000 · AAA-Sovereign Band</td></tr>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Vault Adherence Index</b></td><td style={{ padding: 6, fontSize: 13 }}>{vaultAdherence}% · Nutritional Core Preserved</td></tr>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Flex Restraint Reserve</b></td><td style={{ padding: 6, fontSize: 13 }}>R{flex.toFixed(2)} of R{FLEX_INIT.toFixed(2)} retained</td></tr>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Zero Velocity Flag Compliance</b></td><td style={{ padding: 6, fontSize: 13 }}>PASS · No high-velocity discretionary bursts detected</td></tr>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Verified Ledger Rows</b></td><td style={{ padding: 6, fontSize: 13 }}>{ledger.length} compliance-hashed transactions</td></tr>
+                </tbody>
+              </table>
+
+              <h2 style={{ color: "#8c6f33", fontSize: 14, borderBottom: "1px solid #c5a059", paddingBottom: 4, marginTop: 20 }}>Bankable Verification</h2>
+              <div style={{ background: "#065f46", color: "#fff", padding: 14, borderRadius: 6, textAlign: "center", marginTop: 8 }}>
+                <div style={{ fontWeight: 900, letterSpacing: 1, fontSize: 13 }}>
+                  FNB / Sanlam Collateral Waiver Pre-Qualification Status: APPROVED
+                </div>
+                <div style={{ fontSize: 11, marginTop: 4, opacity: 0.85 }}>
+                  Deposit requirements waived for first asset acquisition pursuant to BAV™ Behavioral Underwriting.
+                </div>
+              </div>
+
+              <div style={{ borderTop: "1px dashed #c5a059", marginTop: 22, paddingTop: 10, fontSize: 10, color: "#666", textAlign: "center", fontFamily: "JetBrains Mono, monospace" }}>
+                SHA-256 Notarized · ISO 8583 Settlement Compliant · Principal Architect: Refilwe David Ledwaba
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
