@@ -146,6 +146,7 @@ export default function App() {
   const [violation, setViolation] = useState(false);
   const [decline, setDecline] = useState(false);
   const [paid, setPaid] = useState(false);
+  const [flexOverflow, setFlexOverflow] = useState(false);
   const [ledger, setLedger] = useState<LedgerRow[]>([]);
   const [telemetry, setTelemetry] = useState<PulseRow[]>([]);
   const [tab, setTab] = useState<"Home" | "Shop" | "Sixty60" | "Merit" | "Audit">("Home");
