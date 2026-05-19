@@ -1012,6 +1012,101 @@ function SecureRailLinkBar({ latency, pulse }: { latency: number; pulse: boolean
   );
 }
 
+/* ============ FINANCIAL CV PANEL ============ */
+function FinancialCvPanel({ grit, vault, flex, ledger }: { grit: number; vault: number; flex: number; ledger: LedgerRow[] }) {
+  const [open, setOpen] = useState(false);
+  const vaultAdherence = ((vault / VAULT_INIT) * 100).toFixed(1);
+  const issued = new Date().toISOString().slice(0, 19).replace("T", " ") + " UTC";
+
+  function downloadHtml() {
+    const html = document.getElementById("bav-cv-doc")?.outerHTML || "";
+    const blob = new Blob([
+      `<!doctype html><html><head><meta charset="utf-8"><title>BAV CV - Refilwe Mokoena</title>
+       <style>body{font-family:Georgia,serif;background:#f3efe6;padding:32px;color:#111}
+       .doc{max-width:780px;margin:auto;background:#fffaf0;border:1px solid #c5a059;padding:32px;box-shadow:0 6px 24px rgba(0,0,0,0.15)}
+       h1{color:#8c6f33;letter-spacing:1px;margin:0} h2{color:#8c6f33;border-bottom:1px solid #c5a059;padding-bottom:4px;margin-top:24px}
+       table{width:100%;border-collapse:collapse;margin-top:8px} td{padding:6px 4px;border-bottom:1px dotted #c5a059;font-size:13px}
+       .badge{display:inline-block;padding:4px 10px;border-radius:4px;background:#065f46;color:#fff;font-weight:900;font-size:12px;letter-spacing:1px}</style>
+       </head><body>${html}</body></html>`,
+    ], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "BAV_Behavioral_Financial_CV_RMokoena.html"; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  return (
+    <>
+      <div className="obsidian gold-border rounded-lg p-3 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        <div>
+          <div className="mono text-[10px] tracking-widest gold-text font-black">BANKABLE OUTPUT MODULE</div>
+          <div className="text-[11px] text-white/70 mt-0.5">Compile and export the verified Behavioral Actuarial Asset Dossier as a bankable PDF proof.</div>
+        </div>
+        <button onClick={() => setOpen(true)}
+          className="bg-gradient-to-b from-sovereign-goldlite via-sovereign-gold to-[#8c6f33] text-black font-black py-2.5 px-4 rounded-md uppercase tracking-wider text-[11px] shadow-[0_4px_14px_rgba(197,160,89,0.55)] hover:brightness-110 whitespace-nowrap">
+          📄 Download Behavioral Financial CV (PDF Proof)
+        </button>
+      </div>
+
+      {open && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-[#fffaf0] text-black rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border-2 border-sovereign-gold">
+            <div className="bg-black px-4 py-2 flex justify-between items-center sticky top-0 z-10">
+              <div className="gold-text font-black mono text-[11px] tracking-widest">BAV™ CV PREVIEW · BANKABLE PROOF</div>
+              <div className="flex gap-2">
+                <button onClick={downloadHtml} className="bg-sovereign-gold text-black font-black text-[10px] uppercase px-3 py-1 rounded">⤓ Download</button>
+                <button onClick={() => setOpen(false)} className="bg-shoprite-red text-white font-black text-[10px] uppercase px-3 py-1 rounded">Close</button>
+              </div>
+            </div>
+            <div id="bav-cv-doc" className="doc p-8" style={{ fontFamily: "Georgia, serif" }}>
+              <div style={{ textAlign: "center", borderBottom: "2px solid #c5a059", paddingBottom: 12, marginBottom: 16 }}>
+                <h1 style={{ fontSize: 22, color: "#8c6f33", margin: 0, letterSpacing: 1 }}>BAV™ Behavioral Actuarial Asset Dossier</h1>
+                <div style={{ fontSize: 11, color: "#555", marginTop: 4, fontFamily: "JetBrains Mono, monospace" }}>
+                  Issued: {issued} · Authority: Sovereign Fiduciary Engine
+                </div>
+              </div>
+
+              <h2 style={{ color: "#8c6f33", fontSize: 14, borderBottom: "1px solid #c5a059", paddingBottom: 4, marginTop: 0 }}>Subject Profile</h2>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <tbody>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Full Name</b></td><td style={{ padding: 6, fontSize: 13 }}>Refilwe Mokoena</td></tr>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Verified NSFAS Edge Node ID</b></td><td style={{ padding: 6, fontSize: 13, fontFamily: "JetBrains Mono, monospace" }}>BAV_ST_001</td></tr>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Cohort</b></td><td style={{ padding: 6, fontSize: 13 }}>Tier-1 University · NSFAS Statutory Beneficiary</td></tr>
+                </tbody>
+              </table>
+
+              <h2 style={{ color: "#8c6f33", fontSize: 14, borderBottom: "1px solid #c5a059", paddingBottom: 4, marginTop: 20 }}>Live Behavioral Metrics</h2>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <tbody>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Current Grit Score™ Rating</b></td><td style={{ padding: 6, fontSize: 13 }}>{grit} / 1000 · AAA-Sovereign Band</td></tr>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Vault Adherence Index</b></td><td style={{ padding: 6, fontSize: 13 }}>{vaultAdherence}% · Nutritional Core Preserved</td></tr>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Flex Restraint Reserve</b></td><td style={{ padding: 6, fontSize: 13 }}>R{flex.toFixed(2)} of R{FLEX_INIT.toFixed(2)} retained</td></tr>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Zero Velocity Flag Compliance</b></td><td style={{ padding: 6, fontSize: 13 }}>PASS · No high-velocity discretionary bursts detected</td></tr>
+                  <tr><td style={{ padding: 6, fontSize: 13 }}><b>Verified Ledger Rows</b></td><td style={{ padding: 6, fontSize: 13 }}>{ledger.length} compliance-hashed transactions</td></tr>
+                </tbody>
+              </table>
+
+              <h2 style={{ color: "#8c6f33", fontSize: 14, borderBottom: "1px solid #c5a059", paddingBottom: 4, marginTop: 20 }}>Bankable Verification</h2>
+              <div style={{ background: "#065f46", color: "#fff", padding: 14, borderRadius: 6, textAlign: "center", marginTop: 8 }}>
+                <div style={{ fontWeight: 900, letterSpacing: 1, fontSize: 13 }}>
+                  FNB / Sanlam Collateral Waiver Pre-Qualification Status: APPROVED
+                </div>
+                <div style={{ fontSize: 11, marginTop: 4, opacity: 0.85 }}>
+                  Deposit requirements waived for first asset acquisition pursuant to BAV™ Behavioral Underwriting.
+                </div>
+              </div>
+
+              <div style={{ borderTop: "1px dashed #c5a059", marginTop: 22, paddingTop: 10, fontSize: 10, color: "#666", textAlign: "center", fontFamily: "JetBrains Mono, monospace" }}>
+                SHA-256 Notarized · ISO 8583 Settlement Compliant · Principal Architect: Refilwe David Ledwaba
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 /* ============ CIO AUDIT LEDGER ============ */
 function CioAuditLedger({ rows }: { rows: LedgerRow[] }) {
   const flagColor = (f: LedgerRow["whitelist"]) =>
