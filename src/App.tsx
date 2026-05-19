@@ -408,6 +408,61 @@ function StudentPhone({
   );
 }
 
+/* ---------- Xtra Savings Card (flippable) ---------- */
+function XtraSavingsCard() {
+  const [flipped, setFlipped] = useState(false);
+  return (
+    <div className="space-y-1.5">
+      <button onClick={() => setFlipped(f => !f)}
+        className="relative w-full aspect-[1.6/1] rounded-xl overflow-hidden shadow-[0_8px_24px_rgba(91,33,182,0.45)] transition-transform hover:scale-[1.01]"
+        style={{ perspective: "800px" }}>
+        <div className="relative w-full h-full transition-transform duration-500" style={{ transformStyle: "preserve-3d", transform: flipped ? "rotateY(180deg)" : "none" }}>
+          {/* FRONT */}
+          <div className="absolute inset-0 p-3 flex flex-col justify-between text-white"
+            style={{
+              backfaceVisibility: "hidden",
+              background: "linear-gradient(135deg, #4c1d95 0%, #6d28d9 45%, #2e1065 100%)",
+            }}>
+            <div className="flex justify-between items-start">
+              <div className="bg-shoprite-red text-white text-[8px] font-black px-1.5 py-0.5 rounded mono">SHOPRITE</div>
+              <div className="text-[7px] mono opacity-70">XSV · ZA</div>
+            </div>
+            <div className="flex items-end justify-between">
+              <div className="leading-none text-left">
+                <div className="text-[40px] font-black tracking-tighter" style={{ color: "#FFD200", textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}>X</div>
+                <div className="text-[10px] font-black tracking-widest">TRA SAVINGS</div>
+              </div>
+              <div className="text-right">
+                <div className="text-[8px] mono opacity-70">4354 4757 4757 5757</div>
+                <div className="text-[8px] mono opacity-90 font-black">R. MOKOENA</div>
+              </div>
+            </div>
+          </div>
+          {/* BACK */}
+          <div className="absolute inset-0 p-3 flex flex-col justify-center text-white"
+            style={{
+              backfaceVisibility: "hidden",
+              transform: "rotateY(180deg)",
+              background: "linear-gradient(135deg, #2e1065 0%, #4c1d95 100%)",
+            }}>
+            <div className="text-[9px] font-black uppercase tracking-widest text-shoprite-yellow mb-1">Core Utility</div>
+            <div className="text-[11px] leading-snug font-medium">
+              Tracks behavioral nutritional metrics to protect statutory NSFAS capital while unlocking local grocery discounts.
+            </div>
+            <div className="text-[8px] mono opacity-70 mt-2">Tap to flip back</div>
+          </div>
+        </div>
+      </button>
+      <div className="flex items-center gap-1.5 px-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 led shadow-[0_0_6px_rgba(52,211,153,0.9)]" />
+        <span className="text-[8px] mono font-black text-purple-800 leading-tight">
+          Xtra Savings Card Active — Routing Identity Token via Secure BAV™ Valve
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* ---------- Did You Know carousel ---------- */
 function DidYouKnowCarousel() {
   const [i, setI] = useState(0);
