@@ -289,6 +289,8 @@ export default function App() {
           <TelemetryPulse rows={telemetry} />
 
           <CioAuditLedger rows={ledger} />
+
+          <FinancialCvPanel grit={grit} vault={vault} flex={flex} ledger={ledger} />
         </section>
       </div>
 
