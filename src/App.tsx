@@ -940,21 +940,39 @@ function CashierInventoryGrid({ receipt, pulse, paid, onScan }: {
 }
 
 /* ============ LIVE RECEIPT LIST (paper) ============ */
-function LiveReceiptList({ receipt, total, onFinalize, onReset, paid }: {
-  receipt: ReceiptLine[]; total: number; onFinalize: () => void; onReset: () => void; paid: boolean;
+function LiveReceiptList({ receipt, total, onFinalize, onReset, paid, flexOverflow }: {
+  receipt: ReceiptLine[]; total: number; onFinalize: () => void; onReset: () => void; paid: boolean; flexOverflow: boolean;
 }) {
+  const vaultLines = receipt.filter(l => l.sku.bucket === "VAULT");
+  const flexLines = receipt.filter(l => l.sku.bucket === "FLEX");
+  const vaultSpend = vaultLines.reduce((s, l) => s + l.sku.price * l.qty, 0);
+  const flexSpend = flexLines.reduce((s, l) => s + l.sku.price * l.qty, 0);
+  const renderLine = (l: ReceiptLine, i: number) => (
+    <div key={i} className={`text-[8px] mb-1 ${l.sku.priority ? "bg-purple-100 rounded px-1" : ""}`}>
+      <div className="grid grid-cols-12">
+        <div className="col-span-7 truncate">
+          {l.sku.short} <span className={`text-[7px] font-black ${l.sku.bucket === "VAULT" ? "text-emerald-700" : "text-neutral-600"}`}>[{l.sku.bucket}]</span>
+        </div>
+        <div className="col-span-2 text-center">{l.qty}</div>
+        <div className="col-span-3 text-right">R{(l.sku.price * l.qty).toFixed(2)}</div>
+      </div>
+      <div className="text-[7px] opacity-70 flex justify-between">
+        <span>{l.sku.id} [{l.sku.allocation_bucket}]</span>
+        {l.sku.priority && <span className="text-purple-700 font-black">+{l.sku.grit} Grit · DIGNITY</span>}
+      </div>
+    </div>
+  );
   return (
     <div className="bg-[#1b1d22] rounded-lg border border-sovereign-gold/40 overflow-hidden shadow-2xl h-full flex flex-col">
       <div className="px-3 py-1.5 bg-black/40 border-b border-sovereign-gold/30">
-        <div className="mono text-[10px] text-sovereign-goldlite font-black tracking-widest">PAPER STORE RECEIPT</div>
+        <div className="mono text-[10px] text-sovereign-goldlite font-black tracking-widest">PAPER STORE RECEIPT · 70/30 FIDUCIARY AUDIT</div>
       </div>
       <div className="p-2 flex-1">
         <div className="bg-[#f7f3e8] text-black p-2.5 mono text-[9px] leading-tight shadow-inner h-full relative overflow-hidden">
           <div className="text-center font-black">
             <div className="text-shoprite-red text-lg">SHOPRITE</div>
             <div className="text-[10px]">CHECKERS (PTY) LTD</div>
-            <div className="text-[8px]">Store Receipt List</div>
-            <div className="text-[8px]">Terminal #042</div>
+            <div className="text-[8px]">Store Receipt List · Terminal #042</div>
           </div>
           <div className="border-t border-dashed border-black/40 my-1.5" />
           <div className="grid grid-cols-12 font-black text-[8px]">
@@ -964,37 +982,53 @@ function LiveReceiptList({ receipt, total, onFinalize, onReset, paid }: {
           </div>
           <div className="border-t border-dashed border-black/40 my-1" />
           {receipt.length === 0 && !paid && <div className="text-center italic text-[8px] py-4 opacity-60">— empty —</div>}
-          {receipt.map((l, i) => (
-            <div key={i} className={`text-[8px] mb-1 ${l.sku.priority ? "bg-purple-100 rounded px-1" : ""}`}>
-              <div className="grid grid-cols-12">
-                <div className="col-span-7 truncate">
-                  {l.sku.short} <span className={`text-[7px] font-black ${l.sku.bucket === "VAULT" ? "text-emerald-700" : "text-neutral-600"}`}>[{l.sku.bucket}]</span>
-                </div>
-                <div className="col-span-2 text-center">{l.qty}</div>
-                <div className="col-span-3 text-right">R{(l.sku.price * l.qty).toFixed(2)}</div>
+
+          {vaultLines.length > 0 && (
+            <>
+              <div className="text-[8px] font-black text-emerald-800 bg-emerald-100 rounded px-1 py-0.5 my-1 tracking-wider">
+                CORE NUTRITION (70% LOCKED VAULT POOL)
               </div>
-              <div className="text-[7px] opacity-70 flex justify-between">
-                <span>{l.sku.id} [{l.sku.allocation_bucket}]</span>
-                {l.sku.priority && <span className="text-purple-700 font-black">+{l.sku.grit} Grit · DIGNITY</span>}
+              {vaultLines.map(renderLine)}
+            </>
+          )}
+          {flexLines.length > 0 && (
+            <>
+              <div className="text-[8px] font-black text-amber-900 bg-amber-100 rounded px-1 py-0.5 my-1 tracking-wider">
+                FLEX SPEND (30% DISCRETIONARY WALLET POOL)
               </div>
-            </div>
-          ))}
+              {flexLines.map(renderLine)}
+            </>
+          )}
+
           <div className="border-t border-dashed border-black/40 my-1" />
-          <div className="grid grid-cols-12 text-[9px]">
-            <div className="col-span-9">Sub-Total:</div>
-            <div className="col-span-3 text-right">R{total.toFixed(2)}</div>
+          <div className="grid grid-cols-12 text-[8px] text-emerald-800 font-black">
+            <div className="col-span-9">Locked Vault Deductions:</div>
+            <div className="col-span-3 text-right">R{vaultSpend.toFixed(2)}</div>
+          </div>
+          <div className="grid grid-cols-12 text-[8px] text-amber-900 font-black">
+            <div className="col-span-9">Discretionary Flex Deductions:</div>
+            <div className="col-span-3 text-right">R{flexSpend.toFixed(2)}</div>
+          </div>
+          <div className="grid grid-cols-12 text-[8px] opacity-70">
+            <div className="col-span-9">VAT @ 15% (incl.):</div>
+            <div className="col-span-3 text-right">R{(total * 0.15 / 1.15).toFixed(2)}</div>
           </div>
           <div className="grid grid-cols-12 font-black text-[10px] mt-0.5">
             <div className="col-span-9">TOTAL:</div>
             <div className="col-span-3 text-right">R{total.toFixed(2)}</div>
           </div>
 
+          {flexSpend > FLEX_INIT && (
+            <div className="mt-1 text-[8px] font-black text-shoprite-red border border-shoprite-red rounded px-1 py-0.5 text-center">
+              ⚠ Flex R{flexSpend.toFixed(2)} &gt; R{FLEX_INIT.toFixed(2)} cap
+            </div>
+          )}
+
           {paid && (
             <>
               <div className="mt-2 text-center text-emerald-700 font-black border-2 border-emerald-700 rounded py-1">
                 ✓ PAID via BAV™
               </div>
-              {/* Diagonal green ink stamp watermark */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="rotate-[-22deg] border-[3px] border-emerald-700 text-emerald-700 font-black mono px-3 py-1 rounded text-sm opacity-80 bg-white/40 tracking-wider">
                   PAID via BAV™ SECURE LINK
@@ -1006,14 +1040,71 @@ function LiveReceiptList({ receipt, total, onFinalize, onReset, paid }: {
       </div>
       <div className="grid grid-cols-2 gap-1 p-2 pt-0">
         <button onClick={onFinalize} disabled={!receipt.length}
-          className="bg-sovereign-gold disabled:bg-neutral-700 disabled:text-white/40 text-black font-black py-1.5 rounded uppercase tracking-wider text-[10px] hover:brightness-110">
-          Finalize / Pay
+          className={`disabled:bg-neutral-700 disabled:text-white/40 font-black py-1.5 rounded uppercase tracking-wider text-[10px] hover:brightness-110 ${flexOverflow ? "bg-shoprite-red text-white" : "bg-sovereign-gold text-black"}`}>
+          {flexOverflow ? "⚠ Flex Cap Breached" : "Finalize / Pay"}
         </button>
         <button onClick={onReset}
           className="bg-neutral-800 text-white font-black py-1.5 rounded uppercase tracking-wider text-[10px]">
           Reset
         </button>
       </div>
+    </div>
+  );
+}
+
+/* ============ SIXTY60 LOGISTICS DISTRIBUTED INTELLIGENCE ============ */
+function Sixty60LogisticsModule({ grit }: { grit: number }) {
+  const unlocked = grit >= 750;
+  const pct = Math.min(100, (grit / 750) * 100);
+  const subsidyPct = Math.min(100, ((grit - 650) / 100) * 100);
+  return (
+    <div className={`rounded-lg overflow-hidden border ${unlocked ? "border-cyan-300/70 shadow-[0_0_24px_rgba(0,229,255,0.45)]" : "border-sovereign-gold/40"} bg-[#0a1622]`}>
+      <div className={`px-3 py-2 flex justify-between items-center border-b ${unlocked ? "border-cyan-300/40 bg-gradient-to-r from-[#001F4D] to-[#003a6e]" : "border-sovereign-gold/30 bg-black/40"}`}>
+        <div className={`mono text-[11px] tracking-widest font-black ${unlocked ? "text-cyan-200" : "text-sovereign-goldlite"}`}>
+          ⚙ SIXTY60 LOGISTICS DISTRIBUTED INTELLIGENCE
+        </div>
+        <div className={`mono text-[9px] font-black flex items-center gap-1 ${unlocked ? "text-cyan-300" : "text-emerald-400"}`}>
+          <span className={`w-1.5 h-1.5 rounded-full led ${unlocked ? "bg-cyan-300 shadow-[0_0_8px_rgba(0,229,255,0.95)]" : "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]"}`} />
+          {unlocked ? "SPONSOR RAIL ACTIVE" : "STANDARD TIER"}
+        </div>
+      </div>
+
+      {unlocked ? (
+        <div className="p-3 bg-gradient-to-br from-[#001F4D] via-[#003a6e] to-[#001F4D] text-cyan-100">
+          <div className="mono text-[13px] font-black text-center text-cyan-200 tracking-wider drop-shadow-[0_0_8px_rgba(0,229,255,0.9)]">
+            ⚡ REWARD SCHEME AUTHORIZED
+          </div>
+          <div className="mono text-[11px] font-black text-center text-white mt-1">
+            SIXTY60 TRANSIT COSTS ASSIMILATED TO R0.00
+          </div>
+          <div className="mono text-[9px] text-center text-cyan-300/80 mt-1">
+            via Secure Sponsor Rail · Grit {grit} ≥ 750
+          </div>
+          <div className="h-2 rounded-full bg-black/40 mt-3 overflow-hidden border border-cyan-300/40">
+            <div className="h-full bg-gradient-to-r from-cyan-400 to-cyan-200 shadow-[0_0_12px_rgba(0,229,255,0.95)]" style={{ width: "100%" }} />
+          </div>
+        </div>
+      ) : (
+        <div className="p-3">
+          <div className="mono text-[10px] font-black text-sovereign-goldlite tracking-wider mb-1.5">
+            Delivery Subsidy Qualification
+          </div>
+          <div className="relative h-3 rounded-full bg-black/60 border border-white/10 overflow-hidden">
+            <div className="absolute top-0 bottom-0 w-[2px] bg-sovereign-gold z-20 shadow-[0_0_8px_rgba(232,201,122,0.9)]" style={{ left: "65%" }} title="650 threshold" />
+            <div className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-400 transition-all" style={{ width: `${pct}%` }} />
+          </div>
+          <div className="flex justify-between mono text-[8px] mt-1 text-white/60">
+            <span>0</span><span className="text-sovereign-goldlite">650 subsidy gate</span><span>750 free tier</span>
+          </div>
+          <div className="mt-2 bg-amber-500/10 border border-amber-400/40 rounded px-2 py-1 mono text-[10px] text-amber-300">
+            Standard Delivery Rate Active: <b>R35.00</b> · Threshold to Free Tier: <b>{grit} / 750 Points Required</b>
+          </div>
+          <div className="mt-1.5 mono text-[9px] text-white/50 flex justify-between">
+            <span>Subsidy progress (from 650)</span>
+            <span className="text-emerald-300">{Math.max(0, Math.min(100, subsidyPct)).toFixed(0)}%</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
