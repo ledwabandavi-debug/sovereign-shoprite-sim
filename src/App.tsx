@@ -366,7 +366,7 @@ function StudentPhone({
             )}
             {tab === "Home" && <HomeTab vault={vault} flex={flex} grit={grit} />}
             {tab === "Shop" && <ShopTab onScan={onScan} receipt={receipt} />}
-            {tab === "Sixty60" && <Sixty60Tab onScan={onScan} />}
+            {tab === "Sixty60" && <Sixty60Tab onScan={onScan} grit={grit} />}
             {tab === "Merit" && <MeritTab grit={grit} onSync={onMeritSync} />}
             {tab === "Audit" && <AuditTab ledger={ledger} />}
 
