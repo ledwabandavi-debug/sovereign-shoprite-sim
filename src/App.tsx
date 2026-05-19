@@ -596,20 +596,42 @@ function ProductCard({ s, onScan, qty }: { s: SKU; onScan: (s: SKU) => void; qty
 }
 
 /* ---------- Sixty60 Tab (categorized hyper-real grid) ---------- */
-function Sixty60Tab({ onScan }: { onScan: (s: SKU) => void }) {
+function Sixty60Tab({ onScan, grit }: { onScan: (s: SKU) => void; grit: number }) {
   const cats: Category[] = ["Nutritional Staples", "Girl Child Protocol", "Discretionary"];
   const catMeta: Record<Category, { tag: string; color: string }> = {
     "Nutritional Staples": { tag: "Locked Vault Eligible", color: "bg-emerald-500" },
     "Girl Child Protocol": { tag: "Super-Essential · Dignity", color: "bg-purple-500" },
     "Discretionary": { tag: "Flex Wallet Only", color: "bg-neutral-500" },
   };
+  const freeDelivery = grit >= 750;
+  const gritPct = Math.min(100, (grit / 750) * 100);
   return (
     <div className="bg-white min-h-full">
-      <div className="bg-shoprite-red text-white px-3 py-2 flex items-center gap-2">
-        <div className="bg-white text-shoprite-red font-black px-2 py-0.5 rounded text-sm">Sixty<span className="text-shoprite-yellow">60</span></div>
-        <div className="text-[10px] font-black">Delivered in 60 minutes</div>
-        <span className="ml-auto text-[9px] mono opacity-80">Ritebrand · BAV™ Linked</span>
+      <div className="bg-sixty60 text-white px-3 py-2.5 flex items-center gap-2">
+        <div className="bg-white text-sixty60 font-black px-2 py-0.5 rounded text-sm tracking-tight">Sixty<span className="text-shoprite-yellow">60</span></div>
+        <div className="text-[10px] font-black uppercase tracking-wide">Delivered in 60 minutes</div>
+        <span className="ml-auto text-[9px] mono opacity-80">⌖ Cape Town</span>
       </div>
+
+      {/* Dynamic Delivery Logistics Banner */}
+      {freeDelivery ? (
+        <div className="mx-2 mt-2 rounded-lg px-3 py-2 border-2 border-emerald-400 bg-gradient-to-r from-emerald-500/90 to-emerald-400 text-black shadow-[0_0_18px_rgba(52,211,153,0.7)]">
+          <div className="text-[10px] font-black uppercase tracking-wider">⚡ BAV™ Reward Unlocked</div>
+          <div className="text-[11px] font-black">FREE SIXTY60 DELIVERY ACTIVE</div>
+        </div>
+      ) : (
+        <div className="mx-2 mt-2 rounded-lg px-3 py-2 border border-sixty60/30 bg-sixty60/5">
+          <div className="flex justify-between text-[10px] font-black text-sixty60">
+            <span>Sixty60 Delivery Fee: R35.00</span>
+            <span className="mono">{grit} / 750</span>
+          </div>
+          <div className="h-1.5 rounded-full bg-neutral-200 mt-1 overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-sixty60 to-shoprite-red transition-all" style={{ width: `${gritPct}%` }} />
+          </div>
+          <div className="text-[9px] text-neutral-600 mt-1">Grit Score under 750 — Earn points to unlock FREE Delivery</div>
+        </div>
+      )}
+
       <div className="p-2 space-y-3">
         {cats.map((cat) => (
           <div key={cat}>
