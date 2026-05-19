@@ -302,6 +302,23 @@ export default function App() {
             </div>
           </div>
 
+          <div className="grid grid-cols-12 gap-3">
+            <div className="col-span-12 xl:col-span-7">
+              <CashierInventoryGrid receipt={receipt} pulse={pulse} paid={paid} onScan={scan} />
+            </div>
+            <div className="col-span-12 xl:col-span-5">
+              <LiveReceiptList receipt={receipt} total={total} onFinalize={finalize} onReset={resetAll} paid={paid} flexOverflow={flexOverflow} />
+            </div>
+          </div>
+
+          <Sixty60LogisticsModule grit={grit} />
+
+          {flexOverflow && (
+            <div className="bg-shoprite-red text-white px-3 py-2 rounded mono font-black text-[12px] text-center border-y-2 border-sovereign-gold flash-red">
+              ⚠ Governance Constraint Triggered: Flex Pool Insufficient. Core Nutritional Reserves Protected.
+            </div>
+          )}
+
           <SecureRailLinkBar latency={TARGET_MS} pulse={pulse} />
 
           <TelemetryPulse rows={telemetry} />
