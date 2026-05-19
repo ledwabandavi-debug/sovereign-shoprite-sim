@@ -56,8 +56,12 @@ const DID_YOU_KNOW = [
 ];
 
 const WHATSAPP_INSIGHTS = [
-  { from: "Shoprite Alert", body: "10kg Rice is on special. Optimizing your 70% Vault adds +10 Grit points today.", time: "08:14" },
-  { from: "Shoprite Booster", body: "Hi Refilwe, Shoprite has a 'Booster Monday' special on Full Cream Milk. Buying this today optimizes your 70% Vault and adds +5 Grit points.", time: "08:42" },
+  { from: "Shoprite Alert · Sea Point", body: "🛒 Ritebrand Maize Meal 10kg marked down R12.00 — Vault-eligible. Routing via BAV™ rail.", time: "08:14" },
+  { from: "Sixty60 Booster", body: "Hi Refilwe — Full Cream Milk 1L is on Booster Monday. +5 Grit if routed via your 70% Vault.", time: "08:42" },
+  { from: "POS Discount Log · Till #042", body: "📉 Albany White Bread auto-markdown logged: R19.99 → R16.49. Allocation: 70_LOCKED_VAULT.", time: "09:03" },
+  { from: "Shoprite Xtra Savings", body: "⚡ Stayfree 10pk Dignity Protocol coupon clipped automatically. Vault preserved.", time: "09:21" },
+  { from: "BAV™ Ecosystem", body: "Nulaid Eggs 18pk discount detected at your local store · ETA Sixty60: 47 min.", time: "09:38" },
+  { from: "POS Discount Log · Till #042", body: "📉 Tastic Rice 2kg pricedrop verified — ledger hash notarised.", time: "09:55" },
 ];
 
 /* ============ AUDIO ============ */
@@ -142,6 +146,7 @@ export default function App() {
   const [violation, setViolation] = useState(false);
   const [decline, setDecline] = useState(false);
   const [paid, setPaid] = useState(false);
+  const [flexOverflow, setFlexOverflow] = useState(false);
   const [ledger, setLedger] = useState<LedgerRow[]>([]);
   const [telemetry, setTelemetry] = useState<PulseRow[]>([]);
   const [tab, setTab] = useState<"Home" | "Shop" | "Sixty60" | "Merit" | "Audit">("Home");
@@ -199,6 +204,19 @@ export default function App() {
     if (receipt.length === 0) return;
     const vaultSpend = receipt.filter((l) => l.sku.bucket === "VAULT").reduce((s, l) => s + l.sku.price * l.qty, 0);
     const flexSpend = receipt.filter((l) => l.sku.bucket === "FLEX").reduce((s, l) => s + l.sku.price * l.qty, 0);
+    if (flexSpend > FLEX_INIT) {
+      buzz();
+      setFlexOverflow(true);
+      setViolation(true);
+      flashFX();
+      setTelemetry((T) => [{
+        event: "VALVE_LOCK" as const, sku: "GOV_CONSTRAINT", item_description: "Flex pool exceeded R495.00 threshold",
+        cost: flexSpend, allocation_bucket: "30_DYNAMIC_FLEX", compliance_status: "GOVERNANCE_CONSTRAINT_TRIGGERED",
+        flag: "VALVE_LOCK", handshake_latency: `${TARGET_MS}ms`, sha256_hash: sha256Token(),
+      }, ...T].slice(0, 14));
+      setTimeout(() => { setFlexOverflow(false); setViolation(false); }, 5000);
+      return;
+    }
     setVault((v) => Math.max(0, v - vaultSpend));
     setFlex((f) => Math.max(0, f - flexSpend));
     setGrit((g) => g + Math.min(20, receipt.reduce((s, l) => s + Math.max(0, l.sku.grit) * l.qty, 0)));
@@ -275,14 +293,23 @@ export default function App() {
             </div>
           )}
 
+
           <div className="grid grid-cols-12 gap-3">
             <div className="col-span-12 xl:col-span-7">
               <CashierInventoryGrid receipt={receipt} pulse={pulse} paid={paid} onScan={scan} />
             </div>
             <div className="col-span-12 xl:col-span-5">
-              <LiveReceiptList receipt={receipt} total={total} onFinalize={finalize} onReset={resetAll} paid={paid} />
+              <LiveReceiptList receipt={receipt} total={total} onFinalize={finalize} onReset={resetAll} paid={paid} flexOverflow={flexOverflow} />
             </div>
           </div>
+
+          <Sixty60LogisticsModule grit={grit} />
+
+          {flexOverflow && (
+            <div className="bg-shoprite-red text-white px-3 py-2 rounded mono font-black text-[12px] text-center border-y-2 border-sovereign-gold flash-red">
+              ⚠ Governance Constraint Triggered: Flex Pool Insufficient. Core Nutritional Reserves Protected.
+            </div>
+          )}
 
           <SecureRailLinkBar latency={TARGET_MS} pulse={pulse} />
 
@@ -491,32 +518,44 @@ function DidYouKnowCarousel() {
   );
 }
 
-/* ---------- WhatsApp Insights Hub ---------- */
+/* ---------- WhatsApp Discount Notifications Hub ---------- */
 function WhatsAppHub() {
-  const [on, setOn] = useState(true);
+  const [feed, setFeed] = useState(WHATSAPP_INSIGHTS.slice(0, 3));
+  useEffect(() => {
+    let i = 3;
+    const id = setInterval(() => {
+      const next = WHATSAPP_INSIGHTS[i % WHATSAPP_INSIGHTS.length];
+      i++;
+      setFeed((f) => [next, ...f].slice(0, 4));
+    }, 3500);
+    return () => clearInterval(id);
+  }, []);
   return (
-    <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
+    <div className="bg-white rounded-xl border-2 border-[#075E54] overflow-hidden shadow-[0_0_0_1px_rgba(7,94,84,0.4),0_6px_18px_rgba(7,94,84,0.25)]">
       <div className="flex items-center justify-between px-3 py-2 bg-[#075E54] text-white">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-full bg-[#25D366] flex items-center justify-center text-[12px] font-black">W</div>
-          <div className="text-[11px] font-black">WhatsApp Insights Hub</div>
+          <div className="text-[11px] font-black leading-tight">
+            WhatsApp Discount<br/>Notification Hub
+          </div>
         </div>
-        <button onClick={() => setOn(!on)}
-          className={`relative w-9 h-5 rounded-full transition ${on ? "bg-[#25D366]" : "bg-neutral-400"}`}>
-          <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition ${on ? "left-4" : "left-0.5"}`} />
-        </button>
+        <div className="flex items-center gap-1 bg-[#0b3d36] border border-[#25D366] px-1.5 py-0.5 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] led shadow-[0_0_6px_rgba(37,211,102,0.95)]" />
+          <span className="mono text-[7px] font-black text-[#9af0c2] tracking-widest">LIVE ECOSYSTEM CONNECTED</span>
+        </div>
       </div>
-      {on && (
-        <div className="p-2 bg-[#ECE5DD] space-y-1.5">
-          {WHATSAPP_INSIGHTS.map((m, i) => (
-            <div key={i} className="bg-white rounded-lg rounded-tl-none p-2 shadow text-[10px] text-black max-w-[90%]">
-              <div className="font-black text-[#075E54] text-[9px]">{m.from}</div>
-              <div className="leading-snug">{m.body}</div>
-              <div className="text-right text-[7px] text-neutral-500 mt-0.5">{m.time} ✓✓</div>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="p-2 bg-[#ECE5DD] space-y-1.5 max-h-[170px] overflow-hidden">
+        {feed.map((m, i) => (
+          <div key={`${m.time}-${i}`} className="bg-white rounded-lg rounded-tl-none p-2 shadow text-[10px] text-black max-w-[92%] border-l-2 border-[#075E54]">
+            <div className="font-black text-[#075E54] text-[9px]">{m.from}</div>
+            <div className="leading-snug">{m.body}</div>
+            <div className="text-right text-[7px] text-neutral-500 mt-0.5">{m.time} ✓✓</div>
+          </div>
+        ))}
+      </div>
+      <div className="bg-[#0b3d36] text-[#9af0c2] mono text-[8px] font-black px-3 py-1 text-center tracking-widest">
+        ROUTED VIA BAV™ FRAMEWORK · POS DISCOUNT LOGS LIVE
+      </div>
     </div>
   );
 }
@@ -665,10 +704,15 @@ function Sixty60Tab({ onScan, grit }: { onScan: (s: SKU) => void; grit: number }
   const gritPct = Math.min(100, (grit / 750) * 100);
   return (
     <div className="bg-white min-h-full">
-      <div className="bg-sixty60 text-white px-3 py-2.5 flex items-center gap-2">
-        <div className="bg-white text-sixty60 font-black px-2 py-0.5 rounded text-sm tracking-tight">Sixty<span className="text-shoprite-yellow">60</span></div>
-        <div className="text-[10px] font-black uppercase tracking-wide">Delivered in 60 minutes</div>
-        <span className="ml-auto text-[9px] mono opacity-80">⌖ Cape Town</span>
+      <div className="bg-gradient-to-r from-[#001F4D] via-[#0a2a5e] to-[#001F4D] text-white px-3 py-3 flex items-center gap-2 border-b-2 border-[#00E5FF] shadow-[0_4px_18px_rgba(0,229,255,0.25)]">
+        <div className="bg-white px-2 py-0.5 rounded-md text-lg tracking-tighter font-black leading-none flex items-baseline" style={{ fontFamily: "'Inter', sans-serif" }}>
+          <span className="text-[#0a2a5e]">Sixty</span><span className="text-[#00B8D4] drop-shadow-[0_0_4px_rgba(0,229,255,0.7)]">60</span>
+        </div>
+        <div className="text-[10px] font-black uppercase tracking-[0.15em] text-cyan-200">Delivered in 60 minutes</div>
+        <span className="ml-auto flex items-center gap-1 text-[9px] mono text-cyan-300">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-300 led shadow-[0_0_6px_rgba(0,229,255,0.9)]" />
+          ⌖ Cape Town
+        </span>
       </div>
 
       {/* Dynamic Delivery Logistics Banner */}
@@ -888,21 +932,39 @@ function CashierInventoryGrid({ receipt, pulse, paid, onScan }: {
 }
 
 /* ============ LIVE RECEIPT LIST (paper) ============ */
-function LiveReceiptList({ receipt, total, onFinalize, onReset, paid }: {
-  receipt: ReceiptLine[]; total: number; onFinalize: () => void; onReset: () => void; paid: boolean;
+function LiveReceiptList({ receipt, total, onFinalize, onReset, paid, flexOverflow }: {
+  receipt: ReceiptLine[]; total: number; onFinalize: () => void; onReset: () => void; paid: boolean; flexOverflow: boolean;
 }) {
+  const vaultLines = receipt.filter(l => l.sku.bucket === "VAULT");
+  const flexLines = receipt.filter(l => l.sku.bucket === "FLEX");
+  const vaultSpend = vaultLines.reduce((s, l) => s + l.sku.price * l.qty, 0);
+  const flexSpend = flexLines.reduce((s, l) => s + l.sku.price * l.qty, 0);
+  const renderLine = (l: ReceiptLine, i: number) => (
+    <div key={i} className={`text-[8px] mb-1 ${l.sku.priority ? "bg-purple-100 rounded px-1" : ""}`}>
+      <div className="grid grid-cols-12">
+        <div className="col-span-7 truncate">
+          {l.sku.short} <span className={`text-[7px] font-black ${l.sku.bucket === "VAULT" ? "text-emerald-700" : "text-neutral-600"}`}>[{l.sku.bucket}]</span>
+        </div>
+        <div className="col-span-2 text-center">{l.qty}</div>
+        <div className="col-span-3 text-right">R{(l.sku.price * l.qty).toFixed(2)}</div>
+      </div>
+      <div className="text-[7px] opacity-70 flex justify-between">
+        <span>{l.sku.id} [{l.sku.allocation_bucket}]</span>
+        {l.sku.priority && <span className="text-purple-700 font-black">+{l.sku.grit} Grit · DIGNITY</span>}
+      </div>
+    </div>
+  );
   return (
     <div className="bg-[#1b1d22] rounded-lg border border-sovereign-gold/40 overflow-hidden shadow-2xl h-full flex flex-col">
       <div className="px-3 py-1.5 bg-black/40 border-b border-sovereign-gold/30">
-        <div className="mono text-[10px] text-sovereign-goldlite font-black tracking-widest">PAPER STORE RECEIPT</div>
+        <div className="mono text-[10px] text-sovereign-goldlite font-black tracking-widest">PAPER STORE RECEIPT · 70/30 FIDUCIARY AUDIT</div>
       </div>
       <div className="p-2 flex-1">
         <div className="bg-[#f7f3e8] text-black p-2.5 mono text-[9px] leading-tight shadow-inner h-full relative overflow-hidden">
           <div className="text-center font-black">
             <div className="text-shoprite-red text-lg">SHOPRITE</div>
             <div className="text-[10px]">CHECKERS (PTY) LTD</div>
-            <div className="text-[8px]">Store Receipt List</div>
-            <div className="text-[8px]">Terminal #042</div>
+            <div className="text-[8px]">Store Receipt List · Terminal #042</div>
           </div>
           <div className="border-t border-dashed border-black/40 my-1.5" />
           <div className="grid grid-cols-12 font-black text-[8px]">
@@ -912,37 +974,53 @@ function LiveReceiptList({ receipt, total, onFinalize, onReset, paid }: {
           </div>
           <div className="border-t border-dashed border-black/40 my-1" />
           {receipt.length === 0 && !paid && <div className="text-center italic text-[8px] py-4 opacity-60">— empty —</div>}
-          {receipt.map((l, i) => (
-            <div key={i} className={`text-[8px] mb-1 ${l.sku.priority ? "bg-purple-100 rounded px-1" : ""}`}>
-              <div className="grid grid-cols-12">
-                <div className="col-span-7 truncate">
-                  {l.sku.short} <span className={`text-[7px] font-black ${l.sku.bucket === "VAULT" ? "text-emerald-700" : "text-neutral-600"}`}>[{l.sku.bucket}]</span>
-                </div>
-                <div className="col-span-2 text-center">{l.qty}</div>
-                <div className="col-span-3 text-right">R{(l.sku.price * l.qty).toFixed(2)}</div>
+
+          {vaultLines.length > 0 && (
+            <>
+              <div className="text-[8px] font-black text-emerald-800 bg-emerald-100 rounded px-1 py-0.5 my-1 tracking-wider">
+                CORE NUTRITION (70% LOCKED VAULT POOL)
               </div>
-              <div className="text-[7px] opacity-70 flex justify-between">
-                <span>{l.sku.id} [{l.sku.allocation_bucket}]</span>
-                {l.sku.priority && <span className="text-purple-700 font-black">+{l.sku.grit} Grit · DIGNITY</span>}
+              {vaultLines.map(renderLine)}
+            </>
+          )}
+          {flexLines.length > 0 && (
+            <>
+              <div className="text-[8px] font-black text-amber-900 bg-amber-100 rounded px-1 py-0.5 my-1 tracking-wider">
+                FLEX SPEND (30% DISCRETIONARY WALLET POOL)
               </div>
-            </div>
-          ))}
+              {flexLines.map(renderLine)}
+            </>
+          )}
+
           <div className="border-t border-dashed border-black/40 my-1" />
-          <div className="grid grid-cols-12 text-[9px]">
-            <div className="col-span-9">Sub-Total:</div>
-            <div className="col-span-3 text-right">R{total.toFixed(2)}</div>
+          <div className="grid grid-cols-12 text-[8px] text-emerald-800 font-black">
+            <div className="col-span-9">Locked Vault Deductions:</div>
+            <div className="col-span-3 text-right">R{vaultSpend.toFixed(2)}</div>
+          </div>
+          <div className="grid grid-cols-12 text-[8px] text-amber-900 font-black">
+            <div className="col-span-9">Discretionary Flex Deductions:</div>
+            <div className="col-span-3 text-right">R{flexSpend.toFixed(2)}</div>
+          </div>
+          <div className="grid grid-cols-12 text-[8px] opacity-70">
+            <div className="col-span-9">VAT @ 15% (incl.):</div>
+            <div className="col-span-3 text-right">R{(total * 0.15 / 1.15).toFixed(2)}</div>
           </div>
           <div className="grid grid-cols-12 font-black text-[10px] mt-0.5">
             <div className="col-span-9">TOTAL:</div>
             <div className="col-span-3 text-right">R{total.toFixed(2)}</div>
           </div>
 
+          {flexSpend > FLEX_INIT && (
+            <div className="mt-1 text-[8px] font-black text-shoprite-red border border-shoprite-red rounded px-1 py-0.5 text-center">
+              ⚠ Flex R{flexSpend.toFixed(2)} &gt; R{FLEX_INIT.toFixed(2)} cap
+            </div>
+          )}
+
           {paid && (
             <>
               <div className="mt-2 text-center text-emerald-700 font-black border-2 border-emerald-700 rounded py-1">
                 ✓ PAID via BAV™
               </div>
-              {/* Diagonal green ink stamp watermark */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="rotate-[-22deg] border-[3px] border-emerald-700 text-emerald-700 font-black mono px-3 py-1 rounded text-sm opacity-80 bg-white/40 tracking-wider">
                   PAID via BAV™ SECURE LINK
@@ -954,14 +1032,71 @@ function LiveReceiptList({ receipt, total, onFinalize, onReset, paid }: {
       </div>
       <div className="grid grid-cols-2 gap-1 p-2 pt-0">
         <button onClick={onFinalize} disabled={!receipt.length}
-          className="bg-sovereign-gold disabled:bg-neutral-700 disabled:text-white/40 text-black font-black py-1.5 rounded uppercase tracking-wider text-[10px] hover:brightness-110">
-          Finalize / Pay
+          className={`disabled:bg-neutral-700 disabled:text-white/40 font-black py-1.5 rounded uppercase tracking-wider text-[10px] hover:brightness-110 ${flexOverflow ? "bg-shoprite-red text-white" : "bg-sovereign-gold text-black"}`}>
+          {flexOverflow ? "⚠ Flex Cap Breached" : "Finalize / Pay"}
         </button>
         <button onClick={onReset}
           className="bg-neutral-800 text-white font-black py-1.5 rounded uppercase tracking-wider text-[10px]">
           Reset
         </button>
       </div>
+    </div>
+  );
+}
+
+/* ============ SIXTY60 LOGISTICS DISTRIBUTED INTELLIGENCE ============ */
+function Sixty60LogisticsModule({ grit }: { grit: number }) {
+  const unlocked = grit >= 750;
+  const pct = Math.min(100, (grit / 750) * 100);
+  const subsidyPct = Math.min(100, ((grit - 650) / 100) * 100);
+  return (
+    <div className={`rounded-lg overflow-hidden border ${unlocked ? "border-cyan-300/70 shadow-[0_0_24px_rgba(0,229,255,0.45)]" : "border-sovereign-gold/40"} bg-[#0a1622]`}>
+      <div className={`px-3 py-2 flex justify-between items-center border-b ${unlocked ? "border-cyan-300/40 bg-gradient-to-r from-[#001F4D] to-[#003a6e]" : "border-sovereign-gold/30 bg-black/40"}`}>
+        <div className={`mono text-[11px] tracking-widest font-black ${unlocked ? "text-cyan-200" : "text-sovereign-goldlite"}`}>
+          ⚙ SIXTY60 LOGISTICS DISTRIBUTED INTELLIGENCE
+        </div>
+        <div className={`mono text-[9px] font-black flex items-center gap-1 ${unlocked ? "text-cyan-300" : "text-emerald-400"}`}>
+          <span className={`w-1.5 h-1.5 rounded-full led ${unlocked ? "bg-cyan-300 shadow-[0_0_8px_rgba(0,229,255,0.95)]" : "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]"}`} />
+          {unlocked ? "SPONSOR RAIL ACTIVE" : "STANDARD TIER"}
+        </div>
+      </div>
+
+      {unlocked ? (
+        <div className="p-3 bg-gradient-to-br from-[#001F4D] via-[#003a6e] to-[#001F4D] text-cyan-100">
+          <div className="mono text-[13px] font-black text-center text-cyan-200 tracking-wider drop-shadow-[0_0_8px_rgba(0,229,255,0.9)]">
+            ⚡ REWARD SCHEME AUTHORIZED
+          </div>
+          <div className="mono text-[11px] font-black text-center text-white mt-1">
+            SIXTY60 TRANSIT COSTS ASSIMILATED TO R0.00
+          </div>
+          <div className="mono text-[9px] text-center text-cyan-300/80 mt-1">
+            via Secure Sponsor Rail · Grit {grit} ≥ 750
+          </div>
+          <div className="h-2 rounded-full bg-black/40 mt-3 overflow-hidden border border-cyan-300/40">
+            <div className="h-full bg-gradient-to-r from-cyan-400 to-cyan-200 shadow-[0_0_12px_rgba(0,229,255,0.95)]" style={{ width: "100%" }} />
+          </div>
+        </div>
+      ) : (
+        <div className="p-3">
+          <div className="mono text-[10px] font-black text-sovereign-goldlite tracking-wider mb-1.5">
+            Delivery Subsidy Qualification
+          </div>
+          <div className="relative h-3 rounded-full bg-black/60 border border-white/10 overflow-hidden">
+            <div className="absolute top-0 bottom-0 w-[2px] bg-sovereign-gold z-20 shadow-[0_0_8px_rgba(232,201,122,0.9)]" style={{ left: "65%" }} title="650 threshold" />
+            <div className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-400 transition-all" style={{ width: `${pct}%` }} />
+          </div>
+          <div className="flex justify-between mono text-[8px] mt-1 text-white/60">
+            <span>0</span><span className="text-sovereign-goldlite">650 subsidy gate</span><span>750 free tier</span>
+          </div>
+          <div className="mt-2 bg-amber-500/10 border border-amber-400/40 rounded px-2 py-1 mono text-[10px] text-amber-300">
+            Standard Delivery Rate Active: <b>R35.00</b> · Threshold to Free Tier: <b>{grit} / 750 Points Required</b>
+          </div>
+          <div className="mt-1.5 mono text-[9px] text-white/50 flex justify-between">
+            <span>Subsidy progress (from 650)</span>
+            <span className="text-emerald-300">{Math.max(0, Math.min(100, subsidyPct)).toFixed(0)}%</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
