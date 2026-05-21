@@ -240,16 +240,24 @@ export default function App() {
       setTimeout(() => { setFlexOverflow(false); setViolation(false); }, 5000);
       return;
     }
+    const mode: "VAULT_ONLY" | "FLEX_ONLY" | "MIXED" =
+      vaultSpend > 0 && flexSpend > 0 ? "MIXED" : flexSpend > 0 ? "FLEX_ONLY" : "VAULT_ONLY";
+    const stampLabel =
+      mode === "VAULT_ONLY" ? "PAID VIA BAV™ LOCKED VAULT" :
+      mode === "FLEX_ONLY" ? "PAID VIA DISCRETIONARY FLEX WALLET" :
+      "70% VAULT APPROVED // 30% FLEX CLEARED";
     setVault((v) => Math.max(0, v - vaultSpend));
     setFlex((f) => Math.max(0, f - flexSpend));
     setGrit((g) => g + Math.min(20, receipt.reduce((s, l) => s + Math.max(0, l.sku.grit) * l.qty, 0)));
-    beep();
     flashFX();
+    // POS BEEP fires at the moment the 136ms sidecar validation loop completes
+    setTimeout(() => beep(), TARGET_MS);
     setLedger((L) => [{
-      ts: timeNow(), node: "BAV_ST_001", sku: "SETTLEMENT", desc: `PAID via BAV™ · ${receipt.length} items · R${(vaultSpend+flexSpend).toFixed(2)}`,
+      ts: timeNow(), node: "BAV_ST_001", sku: "SETTLEMENT", desc: `${stampLabel} · ${receipt.length} items · R${(vaultSpend+flexSpend).toFixed(2)}`,
       value: vaultSpend + flexSpend, whitelist: "WHITELIST" as const, hash: `Compliance Hashing(${shortHash()}`,
     }, ...L].slice(0, 60));
     setReceipt([]);
+    setPaidMode(mode);
     setPaid(true);
     setTimeout(() => setPaid(false), 4500);
   }
