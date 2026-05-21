@@ -1057,17 +1057,33 @@ function LiveReceiptList({ receipt, total, onFinalize, onReset, paid, paidMode, 
             </div>
           )}
 
-          {paid && (
-            <>
-              <div className="mt-2 text-center text-emerald-700 font-black border-2 border-emerald-700 rounded py-1">
-                ✓ PAID via BAV™
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="rotate-[-22deg] border-[3px] border-emerald-700 text-emerald-700 font-black mono px-3 py-1 rounded text-sm opacity-80 bg-white/40 tracking-wider">
-                  PAID via BAV™ SECURE LINK
+          {paid && (() => {
+            const stampLines = paidMode === "MIXED"
+              ? ["70% VAULT APPROVED", "// 30% FLEX CLEARED"]
+              : paidMode === "FLEX_ONLY"
+                ? ["PAID VIA DISCRETIONARY", "FLEX WALLET"]
+                : ["PAID VIA BAV™", "LOCKED VAULT"];
+            return (
+              <>
+                <div className="mt-2 text-center text-emerald-700 font-black border-2 border-emerald-700 rounded py-1 text-[10px] tracking-wider">
+                  ✓ {stampLines.join(" · ")}
                 </div>
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="rotate-[-22deg] border-[3px] border-emerald-700 text-emerald-700 font-black mono px-3 py-2 rounded text-[11px] opacity-85 bg-white/50 tracking-wider text-center leading-tight">
+                    {stampLines.map((l, i) => <div key={i}>{l}</div>)}
+                    <div className="text-[7px] mt-0.5 opacity-80">SIDECAR LEDGER · TILL #042</div>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
+
+          {restrictedAlert && (
+            <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
+              <div className="bg-shoprite-red text-white font-black mono px-2 py-1.5 rounded border-2 border-white shadow-2xl text-center text-[9px] tracking-wider animate-pulse">
+                ⛔ GOVERNANCE CONSTRAINT<br/>RESTRICTED ITEM BLOCKED<br/><span className="text-[8px] opacity-90 normal-case">{restrictedAlert}</span>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>
