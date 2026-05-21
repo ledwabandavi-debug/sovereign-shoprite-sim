@@ -249,10 +249,7 @@ export default function App() {
     setVault(VAULT_INIT); setFlex(FLEX_INIT); setReceipt([]); setGrit(740); setPaid(false);
   }
 
-  useEffect(() => {
-    const id = setInterval(() => setLatency(() => TARGET_MS + (Math.random() < 0.5 ? -2 : 2)), 4000);
-    return () => clearInterval(id);
-  }, []);
+  useEffect(() => { setLatency(TARGET_MS); }, []);
 
   return (
     <div className="min-h-screen obsidian text-white">
