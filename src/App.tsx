@@ -106,7 +106,7 @@ type LedgerRow = {
   sku: string;
   desc: string;
   value: number;
-  whitelist: "WHITELIST" | "LUXURY" | "VALVE_LOCK" | "MERIT_SYNC";
+  whitelist: "WHITELIST" | "LUXURY" | "VALVE_LOCK" | "MERIT_SYNC" | "RESTRICTED";
   hash: string;
 };
 type PulseRow = {
