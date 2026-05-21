@@ -149,7 +149,9 @@ export default function App() {
   const [violation, setViolation] = useState(false);
   const [decline, setDecline] = useState(false);
   const [paid, setPaid] = useState(false);
+  const [paidMode, setPaidMode] = useState<"VAULT_ONLY" | "FLEX_ONLY" | "MIXED">("VAULT_ONLY");
   const [flexOverflow, setFlexOverflow] = useState(false);
+  const [restrictedAlert, setRestrictedAlert] = useState<string | null>(null);
   const [ledger, setLedger] = useState<LedgerRow[]>([]);
   const [telemetry, setTelemetry] = useState<PulseRow[]>([]);
   const [tab, setTab] = useState<"Home" | "Shop" | "Sixty60" | "Merit" | "Audit">("Home");
