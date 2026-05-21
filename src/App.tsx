@@ -602,6 +602,12 @@ function HomeTab({ vault, flex, grit }: { vault: number; flex: number; grit: num
               <div className="h-full rounded-full bg-gradient-to-r from-sovereign-gold to-sovereign-goldlite" style={{ width: `${(flex / FLEX_INIT) * 100}%` }} />
             </div>
           </div>
+          <div className="mt-1 flex items-center gap-1.5 rounded px-2 py-1 border border-emerald-400 bg-emerald-50">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="mono text-[8.5px] font-black tracking-wider text-neutral-700 uppercase">
+              Sidecar → Wallet · Δ Pushed @ 136ms
+            </span>
+          </div>
         </div>
 
         <WhatsAppHub />
