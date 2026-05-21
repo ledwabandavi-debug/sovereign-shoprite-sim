@@ -325,10 +325,10 @@ export default function App() {
 
           <div className="grid grid-cols-12 gap-3">
             <div className="col-span-12 xl:col-span-7">
-              <CashierInventoryGrid receipt={receipt} pulse={pulse} paid={paid} onScan={scan} />
+              <CashierInventoryGrid receipt={receipt} pulse={pulse} paid={paid} paidMode={paidMode} onScan={scan} />
             </div>
             <div className="col-span-12 xl:col-span-5">
-              <LiveReceiptList receipt={receipt} total={total} onFinalize={finalize} onReset={resetAll} paid={paid} flexOverflow={flexOverflow} />
+              <LiveReceiptList receipt={receipt} total={total} onFinalize={finalize} onReset={resetAll} paid={paid} paidMode={paidMode} flexOverflow={flexOverflow} restrictedAlert={restrictedAlert} />
             </div>
           </div>
 
