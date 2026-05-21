@@ -168,7 +168,25 @@ export default function App() {
 
   function scan(sku: SKU) {
     setPaid(false);
+    // RESTRICTED items: ecosystem-blocked, never enter vault or flex
+    if (sku.flag === "RESTRICTED") {
+      buzz();
+      setRestrictedAlert(`${sku.short} — Restricted Item Blocked by Sidecar Valve`);
+      const lat = flashFX();
+      setLedger((L) => [{
+        ts: timeNow(), node: "BAV_ST_001", sku: sku.id, desc: `RESTRICTED · ${sku.short}`,
+        value: sku.price, whitelist: "RESTRICTED" as const, hash: `Compliance Hashing(${shortHash()}`,
+      }, ...L].slice(0, 60));
+      setTelemetry((T) => [{
+        event: "VALVE_LOCK" as const, sku: sku.id, item_description: sku.name, cost: sku.price,
+        allocation_bucket: sku.allocation_bucket, compliance_status: "RESTRICTED_BLOCKED",
+        flag: "RESTRICTED", handshake_latency: `${lat}ms`, sha256_hash: sha256Token(),
+      }, ...T].slice(0, 14));
+      setTimeout(() => setRestrictedAlert(null), 3600);
+      return;
+    }
     const flexSpend = receipt.filter((l) => l.sku.bucket === "FLEX").reduce((s, l) => s + l.sku.price * l.qty, 0);
+    // LUXURY items route strictly into the 30% Flex pool — block if insufficient
     if (sku.bucket === "FLEX" && flex - flexSpend - sku.price < 0) {
       buzz();
       setViolation(true);
