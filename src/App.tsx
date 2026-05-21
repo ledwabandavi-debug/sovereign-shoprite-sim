@@ -41,6 +41,9 @@ const INVENTORY: SKU[] = [
   { id: "SKU_BAV_007", name: "Discretionary Soft Drink / Soda 2L", short: "Soft Drink Soda 2L", price: 14.99, bucket: "FLEX", flag: "LUXURY", allocation_bucket: "30_DYNAMIC_FLEX", compliance_status: "DISCRETIONARY_ALLOWED", category: "Discretionary", grit: -50, img: "", emoji: "🥤", accent: "#c2410c" },
   { id: "SKU_BAV_008", name: "Cadbury Dairy Milk Chocolate Slab 80g", short: "Cadbury Dairy Milk 80g", price: 24.99, bucket: "FLEX", flag: "LUXURY", allocation_bucket: "30_DYNAMIC_FLEX", compliance_status: "DISCRETIONARY_ALLOWED", category: "Discretionary", grit: -50, img: imgChoc, accent: "#6b3a8f" },
   { id: "SKU_BAV_009", name: "2GB Campus Mobile Data Bundle", short: "2GB Campus Data Bundle", price: 149.0, bucket: "FLEX", flag: "LUXURY", allocation_bucket: "30_DYNAMIC_FLEX", compliance_status: "DISCRETIONARY_ALLOWED", category: "Discretionary", grit: -50, img: "", emoji: "📶", accent: "#5a3aa8" },
+
+  { id: "SKU_BAV_R01", name: "Tobacco · 20 Cigarettes Pack", short: "Tobacco 20pk", price: 65.00, bucket: "FLEX", flag: "RESTRICTED", allocation_bucket: "ECOSYSTEM_RESTRICTED", compliance_status: "RESTRICTED_BLOCKED", category: "Restricted", grit: -150, img: "", emoji: "🚭", accent: "#7f1d1d" },
+  { id: "SKU_BAV_R02", name: "Premium Electronics · Wireless Earbuds", short: "Lux Earbuds", price: 899.00, bucket: "FLEX", flag: "RESTRICTED", allocation_bucket: "ECOSYSTEM_RESTRICTED", compliance_status: "RESTRICTED_BLOCKED", category: "Restricted", grit: -150, img: "", emoji: "🎧", accent: "#7f1d1d" },
 ];
 
 const TOTAL_POOL = 1650;
