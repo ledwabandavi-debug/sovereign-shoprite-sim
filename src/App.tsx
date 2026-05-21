@@ -8,8 +8,8 @@ import imgChoc from "@/assets/choc.png";
 
 /* ============ TYPES & DATA ============ */
 type Bucket = "VAULT" | "FLEX";
-type Flag = "WHITELIST" | "LUXURY";
-type Category = "Nutritional Staples" | "Girl Child Protocol" | "Discretionary";
+type Flag = "WHITELIST" | "LUXURY" | "RESTRICTED";
+type Category = "Nutritional Staples" | "Girl Child Protocol" | "Discretionary" | "Restricted";
 type SKU = {
   id: string;
   name: string;
@@ -17,8 +17,8 @@ type SKU = {
   price: number;
   bucket: Bucket;
   flag: Flag;
-  allocation_bucket: "70_LOCKED_VAULT" | "30_DYNAMIC_FLEX";
-  compliance_status: "WHITELIST_APPROVED" | "DISCRETIONARY_ALLOWED";
+  allocation_bucket: "70_LOCKED_VAULT" | "30_DYNAMIC_FLEX" | "ECOSYSTEM_RESTRICTED";
+  compliance_status: "WHITELIST_APPROVED" | "DISCRETIONARY_ALLOWED" | "RESTRICTED_BLOCKED";
   priority?: boolean;
   category: Category;
   grit: number;
@@ -41,6 +41,9 @@ const INVENTORY: SKU[] = [
   { id: "SKU_BAV_007", name: "Discretionary Soft Drink / Soda 2L", short: "Soft Drink Soda 2L", price: 14.99, bucket: "FLEX", flag: "LUXURY", allocation_bucket: "30_DYNAMIC_FLEX", compliance_status: "DISCRETIONARY_ALLOWED", category: "Discretionary", grit: -50, img: "", emoji: "🥤", accent: "#c2410c" },
   { id: "SKU_BAV_008", name: "Cadbury Dairy Milk Chocolate Slab 80g", short: "Cadbury Dairy Milk 80g", price: 24.99, bucket: "FLEX", flag: "LUXURY", allocation_bucket: "30_DYNAMIC_FLEX", compliance_status: "DISCRETIONARY_ALLOWED", category: "Discretionary", grit: -50, img: imgChoc, accent: "#6b3a8f" },
   { id: "SKU_BAV_009", name: "2GB Campus Mobile Data Bundle", short: "2GB Campus Data Bundle", price: 149.0, bucket: "FLEX", flag: "LUXURY", allocation_bucket: "30_DYNAMIC_FLEX", compliance_status: "DISCRETIONARY_ALLOWED", category: "Discretionary", grit: -50, img: "", emoji: "📶", accent: "#5a3aa8" },
+
+  { id: "SKU_BAV_R01", name: "Tobacco · 20 Cigarettes Pack", short: "Tobacco 20pk", price: 65.00, bucket: "FLEX", flag: "RESTRICTED", allocation_bucket: "ECOSYSTEM_RESTRICTED", compliance_status: "RESTRICTED_BLOCKED", category: "Restricted", grit: -150, img: "", emoji: "🚭", accent: "#7f1d1d" },
+  { id: "SKU_BAV_R02", name: "Premium Electronics · Wireless Earbuds", short: "Lux Earbuds", price: 899.00, bucket: "FLEX", flag: "RESTRICTED", allocation_bucket: "ECOSYSTEM_RESTRICTED", compliance_status: "RESTRICTED_BLOCKED", category: "Restricted", grit: -150, img: "", emoji: "🎧", accent: "#7f1d1d" },
 ];
 
 const TOTAL_POOL = 1650;
@@ -106,7 +109,7 @@ type LedgerRow = {
   sku: string;
   desc: string;
   value: number;
-  whitelist: "WHITELIST" | "LUXURY" | "VALVE_LOCK" | "MERIT_SYNC";
+  whitelist: "WHITELIST" | "LUXURY" | "VALVE_LOCK" | "MERIT_SYNC" | "RESTRICTED";
   hash: string;
 };
 type PulseRow = {
@@ -146,7 +149,9 @@ export default function App() {
   const [violation, setViolation] = useState(false);
   const [decline, setDecline] = useState(false);
   const [paid, setPaid] = useState(false);
+  const [paidMode, setPaidMode] = useState<"VAULT_ONLY" | "FLEX_ONLY" | "MIXED">("VAULT_ONLY");
   const [flexOverflow, setFlexOverflow] = useState(false);
+  const [restrictedAlert, setRestrictedAlert] = useState<string | null>(null);
   const [ledger, setLedger] = useState<LedgerRow[]>([]);
   const [telemetry, setTelemetry] = useState<PulseRow[]>([]);
   const [tab, setTab] = useState<"Home" | "Shop" | "Sixty60" | "Merit" | "Audit">("Home");
@@ -163,7 +168,25 @@ export default function App() {
 
   function scan(sku: SKU) {
     setPaid(false);
+    // RESTRICTED items: ecosystem-blocked, never enter vault or flex
+    if (sku.flag === "RESTRICTED") {
+      buzz();
+      setRestrictedAlert(`${sku.short} — Restricted Item Blocked by Sidecar Valve`);
+      const lat = flashFX();
+      setLedger((L) => [{
+        ts: timeNow(), node: "BAV_ST_001", sku: sku.id, desc: `RESTRICTED · ${sku.short}`,
+        value: sku.price, whitelist: "RESTRICTED" as const, hash: `Compliance Hashing(${shortHash()}`,
+      }, ...L].slice(0, 60));
+      setTelemetry((T) => [{
+        event: "VALVE_LOCK" as const, sku: sku.id, item_description: sku.name, cost: sku.price,
+        allocation_bucket: sku.allocation_bucket, compliance_status: "RESTRICTED_BLOCKED",
+        flag: "RESTRICTED", handshake_latency: `${lat}ms`, sha256_hash: sha256Token(),
+      }, ...T].slice(0, 14));
+      setTimeout(() => setRestrictedAlert(null), 3600);
+      return;
+    }
     const flexSpend = receipt.filter((l) => l.sku.bucket === "FLEX").reduce((s, l) => s + l.sku.price * l.qty, 0);
+    // LUXURY items route strictly into the 30% Flex pool — block if insufficient
     if (sku.bucket === "FLEX" && flex - flexSpend - sku.price < 0) {
       buzz();
       setViolation(true);
@@ -217,16 +240,24 @@ export default function App() {
       setTimeout(() => { setFlexOverflow(false); setViolation(false); }, 5000);
       return;
     }
+    const mode: "VAULT_ONLY" | "FLEX_ONLY" | "MIXED" =
+      vaultSpend > 0 && flexSpend > 0 ? "MIXED" : flexSpend > 0 ? "FLEX_ONLY" : "VAULT_ONLY";
+    const stampLabel =
+      mode === "VAULT_ONLY" ? "PAID VIA BAV™ LOCKED VAULT" :
+      mode === "FLEX_ONLY" ? "PAID VIA DISCRETIONARY FLEX WALLET" :
+      "70% VAULT APPROVED // 30% FLEX CLEARED";
     setVault((v) => Math.max(0, v - vaultSpend));
     setFlex((f) => Math.max(0, f - flexSpend));
     setGrit((g) => g + Math.min(20, receipt.reduce((s, l) => s + Math.max(0, l.sku.grit) * l.qty, 0)));
-    beep();
     flashFX();
+    // POS BEEP fires at the moment the 136ms sidecar validation loop completes
+    setTimeout(() => beep(), TARGET_MS);
     setLedger((L) => [{
-      ts: timeNow(), node: "BAV_ST_001", sku: "SETTLEMENT", desc: `PAID via BAV™ · ${receipt.length} items · R${(vaultSpend+flexSpend).toFixed(2)}`,
+      ts: timeNow(), node: "BAV_ST_001", sku: "SETTLEMENT", desc: `${stampLabel} · ${receipt.length} items · R${(vaultSpend+flexSpend).toFixed(2)}`,
       value: vaultSpend + flexSpend, whitelist: "WHITELIST" as const, hash: `Compliance Hashing(${shortHash()}`,
     }, ...L].slice(0, 60));
     setReceipt([]);
+    setPaidMode(mode);
     setPaid(true);
     setTimeout(() => setPaid(false), 4500);
   }
@@ -294,10 +325,10 @@ export default function App() {
 
           <div className="grid grid-cols-12 gap-3">
             <div className="col-span-12 xl:col-span-7">
-              <CashierInventoryGrid receipt={receipt} pulse={pulse} paid={paid} onScan={scan} />
+              <CashierInventoryGrid receipt={receipt} pulse={pulse} paid={paid} paidMode={paidMode} onScan={scan} />
             </div>
             <div className="col-span-12 xl:col-span-5">
-              <LiveReceiptList receipt={receipt} total={total} onFinalize={finalize} onReset={resetAll} paid={paid} flexOverflow={flexOverflow} />
+              <LiveReceiptList receipt={receipt} total={total} onFinalize={finalize} onReset={resetAll} paid={paid} paidMode={paidMode} flexOverflow={flexOverflow} restrictedAlert={restrictedAlert} />
             </div>
           </div>
 
@@ -703,6 +734,7 @@ function Sixty60Tab({ onScan, grit }: { onScan: (s: SKU) => void; grit: number }
     "Nutritional Staples": { tag: "Locked Vault Eligible", color: "bg-emerald-500" },
     "Girl Child Protocol": { tag: "Super-Essential · Dignity", color: "bg-purple-500" },
     "Discretionary": { tag: "Flex Wallet Only", color: "bg-neutral-500" },
+    "Restricted": { tag: "Sidecar Blocked", color: "bg-shoprite-red" },
   };
   const freeDelivery = grit >= 750;
   const gritPct = Math.min(100, (grit / 750) * 100);
@@ -891,9 +923,13 @@ function SidecarHeader() {
 }
 
 /* ============ CASHIER INVENTORY GRID — clickable ============ */
-function CashierInventoryGrid({ receipt, pulse, paid, onScan }: {
-  receipt: ReceiptLine[]; pulse: boolean; paid: boolean; onScan: (s: SKU) => void;
+function CashierInventoryGrid({ receipt, pulse, paid, paidMode, onScan }: {
+  receipt: ReceiptLine[]; pulse: boolean; paid: boolean; paidMode: "VAULT_ONLY" | "FLEX_ONLY" | "MIXED"; onScan: (s: SKU) => void;
 }) {
+  const stampLabel =
+    paidMode === "VAULT_ONLY" ? "PAID VIA BAV™ LOCKED VAULT" :
+    paidMode === "FLEX_ONLY" ? "PAID VIA DISCRETIONARY FLEX WALLET" :
+    "70% VAULT // 30% FLEX CLEARED";
   return (
     <div className="bg-[#1b1d22] rounded-lg border border-sovereign-gold/40 overflow-hidden shadow-2xl h-full relative">
       <div className="px-3 py-1.5 bg-black/40 border-b border-sovereign-gold/30 flex justify-between">
@@ -903,9 +939,10 @@ function CashierInventoryGrid({ receipt, pulse, paid, onScan }: {
       <div className="p-2 grid grid-cols-3 gap-1.5">
         {INVENTORY.map((s) => {
           const qty = receipt.find(l => l.sku.id === s.id)?.qty || 0;
+          const restricted = s.flag === "RESTRICTED";
           return (
             <button key={s.id} onClick={() => onScan(s)}
-              className={`relative bg-white rounded-md p-1.5 text-left hover:ring-2 hover:ring-sovereign-gold transition border-l-4 ${qty > 0 && pulse ? "ring-2 ring-sovereign-gold" : ""} ${s.priority ? "shadow-[0_0_8px_rgba(186,107,224,0.5)]" : ""}`}
+              className={`relative bg-white rounded-md p-1.5 text-left hover:ring-2 hover:ring-sovereign-gold transition border-l-4 ${qty > 0 && pulse ? "ring-2 ring-sovereign-gold" : ""} ${s.priority ? "shadow-[0_0_8px_rgba(186,107,224,0.5)]" : ""} ${restricted ? "opacity-90" : ""}`}
               style={{ borderLeftColor: s.accent }}>
               {qty > 0 && (
                 <div className="absolute -top-1 -right-1 bg-sovereign-gold text-black text-[8px] font-black mono px-1 rounded">×{qty}</div>
@@ -916,8 +953,8 @@ function CashierInventoryGrid({ receipt, pulse, paid, onScan }: {
               <div className="text-[9px] font-black text-black leading-tight line-clamp-2 min-h-[22px]">{s.short}</div>
               <div className="flex justify-between items-center mt-0.5">
                 <span className="text-shoprite-red text-[10px] font-black">R{s.price.toFixed(2)}</span>
-                <span className={`text-[7px] font-black mono px-1 py-0.5 rounded ${s.bucket === "VAULT" ? "bg-emerald-100 text-emerald-800" : "bg-neutral-200 text-neutral-700"}`}>
-                  {s.bucket}
+                <span className={`text-[7px] font-black mono px-1 py-0.5 rounded ${restricted ? "bg-shoprite-red text-white" : s.bucket === "VAULT" ? "bg-emerald-100 text-emerald-800" : "bg-neutral-200 text-neutral-700"}`}>
+                  {restricted ? "BLOCKED" : s.bucket}
                 </span>
               </div>
             </button>
@@ -926,8 +963,8 @@ function CashierInventoryGrid({ receipt, pulse, paid, onScan }: {
       </div>
       {paid && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="text-emerald-400 font-black mono text-3xl md:text-4xl rotate-[-12deg] border-4 border-emerald-400 px-4 py-1 rounded opacity-90 bg-black/30">
-            PAID via BAV™
+          <div className="text-emerald-400 font-black mono text-xl md:text-2xl rotate-[-12deg] border-4 border-emerald-400 px-4 py-1 rounded opacity-90 bg-black/40 text-center leading-tight">
+            {stampLabel}
           </div>
         </div>
       )}
@@ -936,8 +973,8 @@ function CashierInventoryGrid({ receipt, pulse, paid, onScan }: {
 }
 
 /* ============ LIVE RECEIPT LIST (paper) ============ */
-function LiveReceiptList({ receipt, total, onFinalize, onReset, paid, flexOverflow }: {
-  receipt: ReceiptLine[]; total: number; onFinalize: () => void; onReset: () => void; paid: boolean; flexOverflow: boolean;
+function LiveReceiptList({ receipt, total, onFinalize, onReset, paid, paidMode, flexOverflow, restrictedAlert }: {
+  receipt: ReceiptLine[]; total: number; onFinalize: () => void; onReset: () => void; paid: boolean; paidMode: "VAULT_ONLY" | "FLEX_ONLY" | "MIXED"; flexOverflow: boolean; restrictedAlert: string | null;
 }) {
   const vaultLines = receipt.filter(l => l.sku.bucket === "VAULT");
   const flexLines = receipt.filter(l => l.sku.bucket === "FLEX");
@@ -1020,17 +1057,33 @@ function LiveReceiptList({ receipt, total, onFinalize, onReset, paid, flexOverfl
             </div>
           )}
 
-          {paid && (
-            <>
-              <div className="mt-2 text-center text-emerald-700 font-black border-2 border-emerald-700 rounded py-1">
-                ✓ PAID via BAV™
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="rotate-[-22deg] border-[3px] border-emerald-700 text-emerald-700 font-black mono px-3 py-1 rounded text-sm opacity-80 bg-white/40 tracking-wider">
-                  PAID via BAV™ SECURE LINK
+          {paid && (() => {
+            const stampLines = paidMode === "MIXED"
+              ? ["70% VAULT APPROVED", "// 30% FLEX CLEARED"]
+              : paidMode === "FLEX_ONLY"
+                ? ["PAID VIA DISCRETIONARY", "FLEX WALLET"]
+                : ["PAID VIA BAV™", "LOCKED VAULT"];
+            return (
+              <>
+                <div className="mt-2 text-center text-emerald-700 font-black border-2 border-emerald-700 rounded py-1 text-[10px] tracking-wider">
+                  ✓ {stampLines.join(" · ")}
                 </div>
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="rotate-[-22deg] border-[3px] border-emerald-700 text-emerald-700 font-black mono px-3 py-2 rounded text-[11px] opacity-85 bg-white/50 tracking-wider text-center leading-tight">
+                    {stampLines.map((l, i) => <div key={i}>{l}</div>)}
+                    <div className="text-[7px] mt-0.5 opacity-80">SIDECAR LEDGER · TILL #042</div>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
+
+          {restrictedAlert && (
+            <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
+              <div className="bg-shoprite-red text-white font-black mono px-2 py-1.5 rounded border-2 border-white shadow-2xl text-center text-[9px] tracking-wider animate-pulse">
+                ⛔ GOVERNANCE CONSTRAINT<br/>RESTRICTED ITEM BLOCKED<br/><span className="text-[8px] opacity-90 normal-case">{restrictedAlert}</span>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>
