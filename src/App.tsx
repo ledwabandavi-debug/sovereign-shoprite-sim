@@ -703,6 +703,7 @@ function Sixty60Tab({ onScan, grit }: { onScan: (s: SKU) => void; grit: number }
     "Nutritional Staples": { tag: "Locked Vault Eligible", color: "bg-emerald-500" },
     "Girl Child Protocol": { tag: "Super-Essential · Dignity", color: "bg-purple-500" },
     "Discretionary": { tag: "Flex Wallet Only", color: "bg-neutral-500" },
+    "Restricted": { tag: "Sidecar Blocked", color: "bg-shoprite-red" },
   };
   const freeDelivery = grit >= 750;
   const gritPct = Math.min(100, (grit / 750) * 100);
