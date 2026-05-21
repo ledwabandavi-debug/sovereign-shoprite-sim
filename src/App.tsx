@@ -923,9 +923,13 @@ function SidecarHeader() {
 }
 
 /* ============ CASHIER INVENTORY GRID — clickable ============ */
-function CashierInventoryGrid({ receipt, pulse, paid, onScan }: {
-  receipt: ReceiptLine[]; pulse: boolean; paid: boolean; onScan: (s: SKU) => void;
+function CashierInventoryGrid({ receipt, pulse, paid, paidMode, onScan }: {
+  receipt: ReceiptLine[]; pulse: boolean; paid: boolean; paidMode: "VAULT_ONLY" | "FLEX_ONLY" | "MIXED"; onScan: (s: SKU) => void;
 }) {
+  const stampLabel =
+    paidMode === "VAULT_ONLY" ? "PAID VIA BAV™ LOCKED VAULT" :
+    paidMode === "FLEX_ONLY" ? "PAID VIA DISCRETIONARY FLEX WALLET" :
+    "70% VAULT // 30% FLEX CLEARED";
   return (
     <div className="bg-[#1b1d22] rounded-lg border border-sovereign-gold/40 overflow-hidden shadow-2xl h-full relative">
       <div className="px-3 py-1.5 bg-black/40 border-b border-sovereign-gold/30 flex justify-between">
@@ -935,9 +939,10 @@ function CashierInventoryGrid({ receipt, pulse, paid, onScan }: {
       <div className="p-2 grid grid-cols-3 gap-1.5">
         {INVENTORY.map((s) => {
           const qty = receipt.find(l => l.sku.id === s.id)?.qty || 0;
+          const restricted = s.flag === "RESTRICTED";
           return (
             <button key={s.id} onClick={() => onScan(s)}
-              className={`relative bg-white rounded-md p-1.5 text-left hover:ring-2 hover:ring-sovereign-gold transition border-l-4 ${qty > 0 && pulse ? "ring-2 ring-sovereign-gold" : ""} ${s.priority ? "shadow-[0_0_8px_rgba(186,107,224,0.5)]" : ""}`}
+              className={`relative bg-white rounded-md p-1.5 text-left hover:ring-2 hover:ring-sovereign-gold transition border-l-4 ${qty > 0 && pulse ? "ring-2 ring-sovereign-gold" : ""} ${s.priority ? "shadow-[0_0_8px_rgba(186,107,224,0.5)]" : ""} ${restricted ? "opacity-90" : ""}`}
               style={{ borderLeftColor: s.accent }}>
               {qty > 0 && (
                 <div className="absolute -top-1 -right-1 bg-sovereign-gold text-black text-[8px] font-black mono px-1 rounded">×{qty}</div>
@@ -948,8 +953,8 @@ function CashierInventoryGrid({ receipt, pulse, paid, onScan }: {
               <div className="text-[9px] font-black text-black leading-tight line-clamp-2 min-h-[22px]">{s.short}</div>
               <div className="flex justify-between items-center mt-0.5">
                 <span className="text-shoprite-red text-[10px] font-black">R{s.price.toFixed(2)}</span>
-                <span className={`text-[7px] font-black mono px-1 py-0.5 rounded ${s.bucket === "VAULT" ? "bg-emerald-100 text-emerald-800" : "bg-neutral-200 text-neutral-700"}`}>
-                  {s.bucket}
+                <span className={`text-[7px] font-black mono px-1 py-0.5 rounded ${restricted ? "bg-shoprite-red text-white" : s.bucket === "VAULT" ? "bg-emerald-100 text-emerald-800" : "bg-neutral-200 text-neutral-700"}`}>
+                  {restricted ? "BLOCKED" : s.bucket}
                 </span>
               </div>
             </button>
@@ -958,8 +963,8 @@ function CashierInventoryGrid({ receipt, pulse, paid, onScan }: {
       </div>
       {paid && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="text-emerald-400 font-black mono text-3xl md:text-4xl rotate-[-12deg] border-4 border-emerald-400 px-4 py-1 rounded opacity-90 bg-black/30">
-            PAID via BAV™
+          <div className="text-emerald-400 font-black mono text-xl md:text-2xl rotate-[-12deg] border-4 border-emerald-400 px-4 py-1 rounded opacity-90 bg-black/40 text-center leading-tight">
+            {stampLabel}
           </div>
         </div>
       )}
@@ -968,8 +973,8 @@ function CashierInventoryGrid({ receipt, pulse, paid, onScan }: {
 }
 
 /* ============ LIVE RECEIPT LIST (paper) ============ */
-function LiveReceiptList({ receipt, total, onFinalize, onReset, paid, flexOverflow }: {
-  receipt: ReceiptLine[]; total: number; onFinalize: () => void; onReset: () => void; paid: boolean; flexOverflow: boolean;
+function LiveReceiptList({ receipt, total, onFinalize, onReset, paid, paidMode, flexOverflow, restrictedAlert }: {
+  receipt: ReceiptLine[]; total: number; onFinalize: () => void; onReset: () => void; paid: boolean; paidMode: "VAULT_ONLY" | "FLEX_ONLY" | "MIXED"; flexOverflow: boolean; restrictedAlert: string | null;
 }) {
   const vaultLines = receipt.filter(l => l.sku.bucket === "VAULT");
   const flexLines = receipt.filter(l => l.sku.bucket === "FLEX");
