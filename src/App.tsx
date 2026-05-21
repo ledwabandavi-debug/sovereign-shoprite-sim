@@ -249,10 +249,7 @@ export default function App() {
     setVault(VAULT_INIT); setFlex(FLEX_INIT); setReceipt([]); setGrit(740); setPaid(false);
   }
 
-  useEffect(() => {
-    const id = setInterval(() => setLatency(() => TARGET_MS + (Math.random() < 0.5 ? -2 : 2)), 4000);
-    return () => clearInterval(id);
-  }, []);
+  useEffect(() => { setLatency(TARGET_MS); }, []);
 
   return (
     <div className="min-h-screen obsidian text-white">
@@ -286,6 +283,7 @@ export default function App() {
         {/* RIGHT 65% — Fiduciary Sidecar Console */}
         <section className="col-span-12 lg:col-span-8 space-y-3">
           <SidecarHeader />
+          <BilateralSplitPanel vault={vault} flex={flex} pulse={pulse} />
 
           {violation && (
             <div className="bg-shoprite-red text-white text-center mono font-black text-sm py-2 rounded flash-red border-y-2 border-sovereign-gold">
@@ -603,6 +601,12 @@ function HomeTab({ vault, flex, grit }: { vault: number; flex: number; grit: num
             <div className="h-2.5 bg-neutral-200 rounded-full mt-1 overflow-hidden">
               <div className="h-full rounded-full bg-gradient-to-r from-sovereign-gold to-sovereign-goldlite" style={{ width: `${(flex / FLEX_INIT) * 100}%` }} />
             </div>
+          </div>
+          <div className="mt-1 flex items-center gap-1.5 rounded px-2 py-1 border border-emerald-400 bg-emerald-50">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="mono text-[8.5px] font-black tracking-wider text-neutral-700 uppercase">
+              Sidecar → Wallet · Δ Pushed @ 136ms
+            </span>
           </div>
         </div>
 
@@ -1103,49 +1107,80 @@ function Sixty60LogisticsModule({ grit }: { grit: number }) {
 
 /* ============ SECURE RAIL LINK PERFORMANCE BAR ============ */
 function SecureRailLinkBar({ latency, pulse }: { latency: number; pulse: boolean }) {
-  const pct = Math.min(100, (latency / 200) * 100);
-  const slaPct = (SLA_MS / 200) * 100;
   return (
-    <div className={`bg-[#1b1d22] border border-sovereign-gold/40 rounded-lg p-3 ${pulse ? "gold-pulse" : ""}`}>
+    <div className={`bg-[#0f1217] border border-emerald-400/30 rounded-lg p-3 ${pulse ? "gold-pulse" : ""}`}>
       <div className="flex justify-between items-center mb-2">
-        <div className="mono text-[11px] text-sovereign-goldlite font-black tracking-widest">
-          🔒 BAV™ SECURE RAIL LINK PERFORMANCE INDEX
+        <div className="mono text-[11px] text-white font-black tracking-widest">
+          🔒 BAV™ LATENCY ROUND-TRIP LINK (RTL) · ENTERPRISE SLA
         </div>
-        <div className="mono text-[10px] text-emerald-400 font-black">● LINK OK</div>
+        <div className="mono text-[10px] text-emerald-400 font-black">● LINK STABLE</div>
       </div>
-
-      <div className="relative h-7 rounded bg-black/70 border border-white/10 overflow-hidden shadow-inner">
-        <div className="absolute inset-0 grid" style={{ gridTemplateColumns: "repeat(20, 1fr)" }}>
-          {Array.from({ length: 20 }).map((_, i) => (
-            <div key={i} className="border-r border-white/5" />
-          ))}
+      <div className="flex items-stretch gap-2">
+        <div className="flex-1 flex items-center justify-between gap-3 rounded-md px-3 py-2.5 bg-gradient-to-r from-emerald-600/20 via-emerald-500/10 to-transparent border border-emerald-400/50 shadow-[inset_0_0_18px_rgba(16,185,129,0.18)]">
+          <div className="flex items-center gap-2">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.9)]" />
+            <span className="mono text-[10px] text-emerald-300 font-black tracking-widest uppercase">Verified SLA Handshake</span>
+          </div>
+          <div className="mono text-[13px] text-white font-black tracking-wider tabular-nums">{latency}ms</div>
         </div>
-        <div className="absolute top-0 bottom-0 w-[2px] bg-shoprite-red z-20 shadow-[0_0_8px_rgba(227,6,19,0.8)]" style={{ left: `${slaPct}%` }} />
-        <div
-          className="absolute top-0 bottom-0 left-0 transition-all duration-200 ease-out z-10"
-          style={{
-            width: `${pct}%`,
-            background: "linear-gradient(90deg, #10b981 0%, #34d399 60%, #6ee7b7 100%)",
-            boxShadow: pulse ? "0 0 24px rgba(52,211,153,0.95) inset, 0 0 14px rgba(52,211,153,0.6)" : "0 0 10px rgba(52,211,153,0.45) inset",
-          }}
-        />
-        <div className="absolute inset-0 flex items-center justify-center mono text-[11px] font-black text-white tracking-wider z-30 drop-shadow">
-          {latency}ms
+        <div className="px-3 py-2.5 rounded-md bg-emerald-500/15 border border-emerald-400/60 mono text-[10px] text-emerald-200 font-black tracking-wider flex items-center">
+          PASSES &lt; {SLA_MS}ms
         </div>
       </div>
-
-      <div className="flex justify-between mt-1.5">
-        <div className="mono text-[9px] text-white/50">0ms</div>
-        <div className="mono text-[9px] text-shoprite-red font-black">SLA &lt; {SLA_MS}ms</div>
-        <div className="mono text-[9px] text-white/50">200ms</div>
-      </div>
-
-      <div className="mt-2 bg-emerald-500/10 border border-emerald-400/40 rounded px-2 py-1 mono text-[10px] text-emerald-300 font-black tracking-wide text-center">
-        136ms / SLA &lt; 150ms REQUIREMENT PASSED (ISO 8583 PROTOCOL)
+      <div className="mt-2 text-center mono text-[9.5px] text-white/70 tracking-wider">
+        LAN THRESHOLD · ZERO TILL LAG · ISO 8583 PROTOCOL CONFORMANT
       </div>
     </div>
   );
 }
+
+/* ============ BILATERAL 70/30 SPLIT PANEL (inside Sidecar) ============ */
+function BilateralSplitPanel({ vault, flex, pulse }: { vault: number; flex: number; pulse: boolean }) {
+  const vaultPct = (vault / VAULT_INIT) * 100;
+  const flexPct = (flex / FLEX_INIT) * 100;
+  return (
+    <div className="bg-[#0f1217] border border-white/10 rounded-lg overflow-hidden shadow-xl">
+      <div className="px-3 py-2 bg-gradient-to-r from-[#1b1d22] to-[#0f1217] border-b border-white/10 flex items-center justify-between">
+        <div className="mono text-[11px] text-white font-black tracking-widest">
+          ▾ SIDECAR FIDUCIARY LEDGER · 70/30 BILATERAL SPLIT (executed here)
+        </div>
+        <div className={`mono text-[9px] font-black tracking-wider px-2 py-0.5 rounded-full border ${pulse ? "border-emerald-400 text-emerald-300 bg-emerald-500/15" : "border-white/20 text-white/60"}`}>
+          {pulse ? "● PUSHING → PHONE WALLET" : "● SYNCED → PHONE WALLET"}
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-2 p-2.5">
+        {/* 70% VAULT */}
+        <div className="rounded-md border border-[#e1192e]/60 bg-gradient-to-br from-[#e1192e]/20 to-[#3a0a10]/40 p-2.5 shadow-[inset_0_0_18px_rgba(225,25,46,0.15)]">
+          <div className="flex items-center justify-between">
+            <span className="mono text-[9px] font-black tracking-wider text-white/80">70% LOCKED NUTRITIONAL VAULT</span>
+            <span className="mono text-[8px] font-black px-1.5 py-0.5 rounded bg-[#e1192e] text-white">CAT A</span>
+          </div>
+          <div className="mt-1 text-white font-black text-xl tabular-nums leading-none">R{vault.toFixed(2)}<span className="text-[10px] text-white/50 font-normal mono"> / R{VAULT_INIT.toFixed(2)}</span></div>
+          <div className="text-[9px] mono text-white/60 mt-0.5">Category A · Statutory Essentials</div>
+          <div className="h-1.5 bg-black/60 rounded-full mt-1.5 overflow-hidden">
+            <div className="h-full rounded-full bg-gradient-to-r from-[#e1192e] to-[#ff5a6c] transition-all" style={{ width: `${vaultPct}%` }} />
+          </div>
+        </div>
+        {/* 30% FLEX */}
+        <div className="rounded-md border border-slate-400/50 bg-gradient-to-br from-slate-500/20 to-slate-900/40 p-2.5 shadow-[inset_0_0_18px_rgba(100,116,139,0.15)]">
+          <div className="flex items-center justify-between">
+            <span className="mono text-[9px] font-black tracking-wider text-white/80">30% DISCRETIONARY FLEX POOL</span>
+            <span className="mono text-[8px] font-black px-1.5 py-0.5 rounded bg-slate-400 text-slate-900">AUX</span>
+          </div>
+          <div className="mt-1 text-white font-black text-xl tabular-nums leading-none">R{flex.toFixed(2)}<span className="text-[10px] text-white/50 font-normal mono"> / R{FLEX_INIT.toFixed(2)}</span></div>
+          <div className="text-[9px] mono text-white/60 mt-0.5">Auxiliary · Behaviourally Gated</div>
+          <div className="h-1.5 bg-black/60 rounded-full mt-1.5 overflow-hidden">
+            <div className="h-full rounded-full bg-gradient-to-r from-slate-400 to-slate-200 transition-all" style={{ width: `${flexPct}%` }} />
+          </div>
+        </div>
+      </div>
+      <div className="px-3 py-1.5 bg-black/40 border-t border-white/10 mono text-[9px] text-white/55 tracking-wider text-center">
+        SPLITTING LOGIC EXECUTED IN SIDECAR LEDGER · STORE CONTROLLER RECEIVES NET TOTAL ONLY
+      </div>
+    </div>
+  );
+}
+
 
 /* ============ FINANCIAL CV PANEL ============ */
 function FinancialCvPanel({ grit, vault, flex, ledger }: { grit: number; vault: number; flex: number; ledger: LedgerRow[] }) {
