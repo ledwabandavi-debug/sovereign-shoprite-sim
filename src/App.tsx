@@ -283,6 +283,7 @@ export default function App() {
         {/* RIGHT 65% — Fiduciary Sidecar Console */}
         <section className="col-span-12 lg:col-span-8 space-y-3">
           <SidecarHeader />
+          <BilateralSplitPanel vault={vault} flex={flex} pulse={pulse} />
 
           {violation && (
             <div className="bg-shoprite-red text-white text-center mono font-black text-sm py-2 rounded flash-red border-y-2 border-sovereign-gold">
