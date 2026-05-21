@@ -17,8 +17,8 @@ type SKU = {
   price: number;
   bucket: Bucket;
   flag: Flag;
-  allocation_bucket: "70_LOCKED_VAULT" | "30_DYNAMIC_FLEX";
-  compliance_status: "WHITELIST_APPROVED" | "DISCRETIONARY_ALLOWED";
+  allocation_bucket: "70_LOCKED_VAULT" | "30_DYNAMIC_FLEX" | "ECOSYSTEM_RESTRICTED";
+  compliance_status: "WHITELIST_APPROVED" | "DISCRETIONARY_ALLOWED" | "RESTRICTED_BLOCKED";
   priority?: boolean;
   category: Category;
   grit: number;
