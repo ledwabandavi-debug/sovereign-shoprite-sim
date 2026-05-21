@@ -8,8 +8,8 @@ import imgChoc from "@/assets/choc.png";
 
 /* ============ TYPES & DATA ============ */
 type Bucket = "VAULT" | "FLEX";
-type Flag = "WHITELIST" | "LUXURY";
-type Category = "Nutritional Staples" | "Girl Child Protocol" | "Discretionary";
+type Flag = "WHITELIST" | "LUXURY" | "RESTRICTED";
+type Category = "Nutritional Staples" | "Girl Child Protocol" | "Discretionary" | "Restricted";
 type SKU = {
   id: string;
   name: string;
