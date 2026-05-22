@@ -193,18 +193,20 @@ export default function App() {
       buzz();
       setViolation(true);
       setDecline(true);
+      setInsufficientFlex(`Flex Pool Balance Insufficient · ${sku.short} blocked · R${(flex - flexSpend).toFixed(2)} remaining`);
       const lat = flashFX();
       setLedger((L) => [{
-        ts: timeNow(), node: "BAV_ST_001", sku: sku.id, desc: sku.short,
+        ts: timeNow(), node: "BAV_ST_001", sku: sku.id, desc: `FLEX POOL INSUFFICIENT · ${sku.short}`,
         value: sku.price, whitelist: "VALVE_LOCK" as const, hash: `Compliance Hashing(${shortHash()}`,
       }, ...L].slice(0, 60));
       setTelemetry((T) => [{
         event: "VALVE_LOCK" as const, sku: sku.id, item_description: sku.name, cost: sku.price,
-        allocation_bucket: sku.allocation_bucket, compliance_status: "ERR_70_30_RATIO_VIOLATION",
+        allocation_bucket: sku.allocation_bucket, compliance_status: "FLEX_POOL_INSUFFICIENT",
         flag: "VALVE_LOCK", handshake_latency: `${lat}ms`, sha256_hash: sha256Token(),
       }, ...T].slice(0, 14));
       setTimeout(() => setViolation(false), 2400);
       setTimeout(() => setDecline(false), 2800);
+      setTimeout(() => setInsufficientFlex(null), 4000);
       return;
     }
     beep();
