@@ -1338,9 +1338,15 @@ function FinancialCvPanel({ grit, vault, flex, ledger }: { grit: number; vault: 
 /* ============ CIO AUDIT LEDGER ============ */
 function CioAuditLedger({ rows }: { rows: LedgerRow[] }) {
   const flagColor = (f: LedgerRow["whitelist"]) =>
-    f === "VALVE_LOCK" ? "text-shoprite-red" :
+    f === "VALVE_LOCK" || f === "RESTRICTED" ? "text-shoprite-red" :
     f === "LUXURY" ? "text-amber-300" :
     f === "MERIT_SYNC" ? "text-sky-300" : "text-emerald-400";
+  const flagLabel = (f: LedgerRow["whitelist"]) =>
+    f === "WHITELIST" ? "Whitelisted Nutritional Product" :
+    f === "LUXURY" ? "Flex Wallet Product" :
+    f === "VALVE_LOCK" ? "Valve Lock · Ratio Breach" :
+    f === "RESTRICTED" ? "Restricted · Blocked" :
+    f === "MERIT_SYNC" ? "Merit Sync · Academic Telemetry" : String(f);
   return (
     <div className="obsidian gold-border rounded-lg overflow-hidden">
       <div className="px-3 py-2 bg-black/40 border-b border-sovereign-gold/30 flex justify-between items-center">
