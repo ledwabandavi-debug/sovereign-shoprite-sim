@@ -351,6 +351,11 @@ export default function App() {
               ⚠ Governance Constraint Triggered: Flex Pool Insufficient. Core Nutritional Reserves Protected.
             </div>
           )}
+          {insufficientFlex && (
+            <div className="bg-shoprite-red text-white px-3 py-2 rounded mono font-black text-[12px] text-center border-y-2 border-sovereign-gold flash-red">
+              ⚠ {insufficientFlex}
+            </div>
+          )}
 
           <SecureRailLinkBar latency={TARGET_MS} pulse={pulse} />
 
