@@ -252,7 +252,12 @@ export default function App() {
       "70% VAULT APPROVED // 30% FLEX CLEARED";
     setVault((v) => Math.max(0, v - vaultSpend));
     setFlex((f) => Math.max(0, f - flexSpend));
-    setGrit((g) => g + Math.min(20, receipt.reduce((s, l) => s + Math.max(0, l.sku.grit) * l.qty, 0)));
+    // Reactive Grit telemetry: pure essentials → +compliance velocity (795); flex spend → return to baseline (780)
+    if (flexSpend === 0 && vaultSpend > 0) {
+      setGrit(795);
+    } else if (flexSpend > 0) {
+      setGrit(780);
+    }
     flashFX();
     // POS BEEP fires at the moment the 136ms sidecar validation loop completes
     setTimeout(() => beep(), TARGET_MS);
