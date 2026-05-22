@@ -308,6 +308,7 @@ export default function App() {
             {beam && (
               <div className="absolute top-1/2 -right-6 h-1 w-32 bg-gradient-to-r from-sovereign-goldlite via-sovereign-gold to-transparent rounded-full beam pointer-events-none z-30 shadow-[0_0_20px_rgba(232,201,122,0.9)]" />
             )}
+            <GritScoreWidget value={grit} />
           </div>
         </section>
 
@@ -596,10 +597,9 @@ function HomeTab({ vault, flex, grit }: { vault: number; flex: number; grit: num
       <div className="relative h-44 overflow-hidden">
         <img src={heroStudents} alt="South African university students on campus" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center">
-          <GritGauge value={grit} />
-          <div className="text-[9px] mono text-white mt-1 font-black drop-shadow">Value:</div>
-          <div className="text-[9px] mono text-sovereign-goldlite font-black">AAA-Sovereign</div>
+        <div className="absolute bottom-2 left-3 right-3 flex justify-between items-end text-white">
+          <div className="mono text-[9px] font-black drop-shadow uppercase tracking-widest">NSFAS · Sovereign Beneficiary</div>
+          <div className="mono text-[9px] text-sovereign-goldlite font-black">AAA-Sovereign</div>
         </div>
       </div>
 
@@ -666,6 +666,44 @@ function GritGauge({ value }: { value: number }) {
         <text x="40" y="36" textAnchor="middle" fontSize="8" fontWeight="700" fill="#e8c97a" fontFamily="JetBrains Mono">Grit Score™</text>
         <text x="40" y="52" textAnchor="middle" fontSize="16" fontWeight="900" fill="#fff" fontFamily="JetBrains Mono">{value}</text>
       </svg>
+    </div>
+  );
+}
+
+/* ---------- Standalone Grit Score Widget (under phone frame) ---------- */
+function GritScoreWidget({ value }: { value: number }) {
+  const display = Math.max(value, 780);
+  const pct = Math.min(100, (display / 1000) * 100);
+  return (
+    <div className="mt-4 mx-auto max-w-[360px] rounded-xl border border-sovereign-gold/40 bg-gradient-to-br from-[#0d0f14] via-[#11141a] to-[#0a0b10] shadow-[0_10px_40px_rgba(0,0,0,0.6)] overflow-hidden">
+      <div className="flex items-center justify-between px-3 py-1.5 border-b border-sovereign-gold/25 bg-black/40">
+        <div className="mono text-[9px] tracking-[0.2em] gold-text font-black">▾ BAV™ BEHAVIORAL ANALYTICS</div>
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="mono text-[8px] font-black tracking-widest text-emerald-300 uppercase">Feed Active</span>
+        </div>
+      </div>
+      <div className="px-4 py-3">
+        <div className="flex items-baseline justify-between">
+          <div>
+            <div className="mono text-[9px] uppercase tracking-widest text-white/50">AAA Grit Score™</div>
+            <div className="mono font-black text-3xl gold-text leading-none mt-1">{display}<span className="text-white/40 text-sm font-bold"> / 1000</span></div>
+          </div>
+          <div className="text-right">
+            <div className="mono text-[8px] uppercase tracking-widest text-white/40">Tier</div>
+            <div className="mono text-[11px] font-black text-sovereign-goldlite">AAA-SOVEREIGN</div>
+          </div>
+        </div>
+        <div className="h-1.5 mt-3 rounded-full bg-white/5 overflow-hidden">
+          <div className="h-full rounded-full bg-gradient-to-r from-sovereign-gold via-sovereign-goldlite to-sovereign-gold" style={{ width: `${pct}%` }} />
+        </div>
+        <div className="mt-2 inline-flex items-center gap-1.5 rounded px-2 py-1 border border-sovereign-gold/40 bg-sovereign-gold/5">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-sovereign-goldlite animate-pulse" />
+          <span className="mono text-[8.5px] font-black tracking-wider text-sovereign-goldlite uppercase">
+            AAA GRIT SCORE™: 780 // Asynchronous Behavioral Analytics Feed Active
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -885,9 +923,15 @@ function MeritTab({ grit, onSync }: { grit: number; onSync: () => void }) {
 
 function AuditTab({ ledger }: { ledger: LedgerRow[] }) {
   const flagColor = (f: LedgerRow["whitelist"]) =>
-    f === "VALVE_LOCK" ? "text-shoprite-red" :
+    f === "VALVE_LOCK" || f === "RESTRICTED" ? "text-shoprite-red" :
     f === "LUXURY" ? "text-amber-300" :
     f === "MERIT_SYNC" ? "text-sky-300" : "text-emerald-400";
+  const flagLabel = (f: LedgerRow["whitelist"]) =>
+    f === "WHITELIST" ? "WHITELISTED NUTRITIONAL" :
+    f === "LUXURY" ? "FLEX WALLET" :
+    f === "VALVE_LOCK" ? "VALVE LOCK" :
+    f === "RESTRICTED" ? "RESTRICTED" :
+    f === "MERIT_SYNC" ? "MERIT SYNC" : String(f);
   return (
     <div className="bg-[#0b0c10] text-white min-h-full p-3 mono">
       <div className="text-[10px] uppercase tracking-widest mb-2 gold-text font-black">Spending Compliance Ledger</div>
@@ -897,7 +941,7 @@ function AuditTab({ ledger }: { ledger: LedgerRow[] }) {
           <div key={i} className="border-b border-white/10 py-1.5 text-[10px]">
             <div className="flex justify-between">
               <span className="opacity-70">{r.ts.slice(11, 19)}</span>
-              <span className={`${flagColor(r.whitelist)} font-black`}>{r.whitelist}</span>
+              <span className={`${flagColor(r.whitelist)} font-black`}>{flagLabel(r.whitelist)}</span>
             </div>
             <div className="flex justify-between">
               <span className="truncate pr-2">{r.desc}</span>
@@ -980,19 +1024,24 @@ function LiveReceiptList({ receipt, total, onFinalize, onReset, paid, paidMode, 
   const flexLines = receipt.filter(l => l.sku.bucket === "FLEX");
   const vaultSpend = vaultLines.reduce((s, l) => s + l.sku.price * l.qty, 0);
   const flexSpend = flexLines.reduce((s, l) => s + l.sku.price * l.qty, 0);
+  const bucketLabel = (bucket: "VAULT" | "FLEX") =>
+    bucket === "VAULT" ? "Whitelisted Nutritional Product" : "Flex Wallet Product";
   const renderLine = (l: ReceiptLine, i: number) => (
     <div key={i} className={`text-[8px] mb-1 ${l.sku.priority ? "bg-purple-100 rounded px-1" : ""}`}>
       <div className="grid grid-cols-12">
         <div className="col-span-7 truncate">
-          {l.sku.short} <span className={`text-[7px] font-black ${l.sku.bucket === "VAULT" ? "text-emerald-700" : "text-neutral-600"}`}>[{l.sku.bucket}]</span>
+          {l.sku.short}
         </div>
         <div className="col-span-2 text-center">{l.qty}</div>
         <div className="col-span-3 text-right">R{(l.sku.price * l.qty).toFixed(2)}</div>
       </div>
-      <div className="text-[7px] opacity-70 flex justify-between">
-        <span>{l.sku.id} [{l.sku.allocation_bucket}]</span>
+      <div className="text-[7px] flex justify-between items-center">
+        <span className={`font-black uppercase tracking-wide ${l.sku.bucket === "VAULT" ? "text-emerald-700" : "text-slate-600"}`}>
+          {bucketLabel(l.sku.bucket)}
+        </span>
         {l.sku.priority && <span className="text-purple-700 font-black">+{l.sku.grit} Grit · DIGNITY</span>}
       </div>
+      <div className="text-[7px] opacity-60">{l.sku.id} [{l.sku.allocation_bucket}]</div>
     </div>
   );
   return (
@@ -1333,9 +1382,15 @@ function FinancialCvPanel({ grit, vault, flex, ledger }: { grit: number; vault: 
 /* ============ CIO AUDIT LEDGER ============ */
 function CioAuditLedger({ rows }: { rows: LedgerRow[] }) {
   const flagColor = (f: LedgerRow["whitelist"]) =>
-    f === "VALVE_LOCK" ? "text-shoprite-red" :
+    f === "VALVE_LOCK" || f === "RESTRICTED" ? "text-shoprite-red" :
     f === "LUXURY" ? "text-amber-300" :
     f === "MERIT_SYNC" ? "text-sky-300" : "text-emerald-400";
+  const flagLabel = (f: LedgerRow["whitelist"]) =>
+    f === "WHITELIST" ? "Whitelisted Nutritional Product" :
+    f === "LUXURY" ? "Flex Wallet Product" :
+    f === "VALVE_LOCK" ? "Valve Lock · Ratio Breach" :
+    f === "RESTRICTED" ? "Restricted · Blocked" :
+    f === "MERIT_SYNC" ? "Merit Sync · Academic Telemetry" : String(f);
   return (
     <div className="obsidian gold-border rounded-lg overflow-hidden">
       <div className="px-3 py-2 bg-black/40 border-b border-sovereign-gold/30 flex justify-between items-center">
@@ -1367,7 +1422,7 @@ function CioAuditLedger({ rows }: { rows: LedgerRow[] }) {
                 <td className="px-2 py-1.5 text-white">{r.desc}</td>
                 <td className="px-2 py-1.5 text-right font-black text-white">R{r.value.toFixed(2)}</td>
                 <td className={`px-2 py-1.5 font-black ${flagColor(r.whitelist)}`}>
-                  {r.whitelist}
+                  {flagLabel(r.whitelist)}
                 </td>
                 <td className="px-2 py-1.5 text-white/50 truncate max-w-[200px]">{r.hash}</td>
               </tr>
