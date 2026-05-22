@@ -1372,7 +1372,7 @@ function CioAuditLedger({ rows }: { rows: LedgerRow[] }) {
                 <td className="px-2 py-1.5 text-white">{r.desc}</td>
                 <td className="px-2 py-1.5 text-right font-black text-white">R{r.value.toFixed(2)}</td>
                 <td className={`px-2 py-1.5 font-black ${flagColor(r.whitelist)}`}>
-                  {r.whitelist}
+                  {flagLabel(r.whitelist)}
                 </td>
                 <td className="px-2 py-1.5 text-white/50 truncate max-w-[200px]">{r.hash}</td>
               </tr>
