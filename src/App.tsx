@@ -272,10 +272,12 @@ export default function App() {
   }
 
   function meritSync() {
-    setGrit((g) => g + 100);
+    setGrit(810);
+    setMeritFlash(true);
+    setTimeout(() => setMeritFlash(false), 4000);
     const lat = flashFX();
     setLedger((L) => [{
-      ts: timeNow(), node: "BAV_MR_002", sku: "MERIT_SYNC", desc: "Academic Telemetry Synchronized · PASS · +100 Grit",
+      ts: timeNow(), node: "BAV_MR_002", sku: "MERIT_SYNC", desc: "Academic Velocity Linked · Grit → 810",
       value: 0, whitelist: "MERIT_SYNC" as const, hash: `Compliance Hashing(${shortHash()}`,
     }, ...L].slice(0, 60));
     setTelemetry((T) => [{
@@ -286,7 +288,7 @@ export default function App() {
   }
 
   function resetAll() {
-    setVault(VAULT_INIT); setFlex(FLEX_INIT); setReceipt([]); setGrit(740); setPaid(false);
+    setVault(VAULT_INIT); setFlex(FLEX_INIT); setReceipt([]); setGrit(780); setPaid(false); setMeritFlash(false);
   }
 
   useEffect(() => { setLatency(TARGET_MS); }, []);
