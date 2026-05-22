@@ -980,19 +980,24 @@ function LiveReceiptList({ receipt, total, onFinalize, onReset, paid, paidMode, 
   const flexLines = receipt.filter(l => l.sku.bucket === "FLEX");
   const vaultSpend = vaultLines.reduce((s, l) => s + l.sku.price * l.qty, 0);
   const flexSpend = flexLines.reduce((s, l) => s + l.sku.price * l.qty, 0);
+  const bucketLabel = (bucket: "VAULT" | "FLEX") =>
+    bucket === "VAULT" ? "Whitelisted Nutritional Product" : "Flex Wallet Product";
   const renderLine = (l: ReceiptLine, i: number) => (
     <div key={i} className={`text-[8px] mb-1 ${l.sku.priority ? "bg-purple-100 rounded px-1" : ""}`}>
       <div className="grid grid-cols-12">
         <div className="col-span-7 truncate">
-          {l.sku.short} <span className={`text-[7px] font-black ${l.sku.bucket === "VAULT" ? "text-emerald-700" : "text-neutral-600"}`}>[{l.sku.bucket}]</span>
+          {l.sku.short}
         </div>
         <div className="col-span-2 text-center">{l.qty}</div>
         <div className="col-span-3 text-right">R{(l.sku.price * l.qty).toFixed(2)}</div>
       </div>
-      <div className="text-[7px] opacity-70 flex justify-between">
-        <span>{l.sku.id} [{l.sku.allocation_bucket}]</span>
+      <div className="text-[7px] flex justify-between items-center">
+        <span className={`font-black uppercase tracking-wide ${l.sku.bucket === "VAULT" ? "text-emerald-700" : "text-slate-600"}`}>
+          {bucketLabel(l.sku.bucket)}
+        </span>
         {l.sku.priority && <span className="text-purple-700 font-black">+{l.sku.grit} Grit · DIGNITY</span>}
       </div>
+      <div className="text-[7px] opacity-60">{l.sku.id} [{l.sku.allocation_bucket}]</div>
     </div>
   );
   return (
