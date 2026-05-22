@@ -885,9 +885,15 @@ function MeritTab({ grit, onSync }: { grit: number; onSync: () => void }) {
 
 function AuditTab({ ledger }: { ledger: LedgerRow[] }) {
   const flagColor = (f: LedgerRow["whitelist"]) =>
-    f === "VALVE_LOCK" ? "text-shoprite-red" :
+    f === "VALVE_LOCK" || f === "RESTRICTED" ? "text-shoprite-red" :
     f === "LUXURY" ? "text-amber-300" :
     f === "MERIT_SYNC" ? "text-sky-300" : "text-emerald-400";
+  const flagLabel = (f: LedgerRow["whitelist"]) =>
+    f === "WHITELIST" ? "WHITELISTED NUTRITIONAL" :
+    f === "LUXURY" ? "FLEX WALLET" :
+    f === "VALVE_LOCK" ? "VALVE LOCK" :
+    f === "RESTRICTED" ? "RESTRICTED" :
+    f === "MERIT_SYNC" ? "MERIT SYNC" : String(f);
   return (
     <div className="bg-[#0b0c10] text-white min-h-full p-3 mono">
       <div className="text-[10px] uppercase tracking-widest mb-2 gold-text font-black">Spending Compliance Ledger</div>
