@@ -596,10 +596,9 @@ function HomeTab({ vault, flex, grit }: { vault: number; flex: number; grit: num
       <div className="relative h-44 overflow-hidden">
         <img src={heroStudents} alt="South African university students on campus" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center">
-          <GritGauge value={grit} />
-          <div className="text-[9px] mono text-white mt-1 font-black drop-shadow">Value:</div>
-          <div className="text-[9px] mono text-sovereign-goldlite font-black">AAA-Sovereign</div>
+        <div className="absolute bottom-2 left-3 right-3 flex justify-between items-end text-white">
+          <div className="mono text-[9px] font-black drop-shadow uppercase tracking-widest">NSFAS · Sovereign Beneficiary</div>
+          <div className="mono text-[9px] text-sovereign-goldlite font-black">AAA-Sovereign</div>
         </div>
       </div>
 
