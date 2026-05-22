@@ -308,6 +308,7 @@ export default function App() {
             {beam && (
               <div className="absolute top-1/2 -right-6 h-1 w-32 bg-gradient-to-r from-sovereign-goldlite via-sovereign-gold to-transparent rounded-full beam pointer-events-none z-30 shadow-[0_0_20px_rgba(232,201,122,0.9)]" />
             )}
+            <GritScoreWidget value={grit} />
           </div>
         </section>
 
