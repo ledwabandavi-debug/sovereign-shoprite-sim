@@ -682,13 +682,15 @@ function GritGauge({ value }: { value: number }) {
 }
 
 /* ---------- Standalone Grit Score Widget (under phone frame) ---------- */
-function GritScoreWidget({ value }: { value: number }) {
-  const display = Math.max(value, 780);
-  const pct = Math.min(100, (display / 1000) * 100);
+function GritScoreWidget({ value, meritFlash }: { value: number; meritFlash: boolean }) {
+  const pct = Math.min(100, (value / 1000) * 100);
+  const delta = value - 780;
+  const deltaLabel = delta > 0 ? `▲ +${delta}` : delta < 0 ? `▼ ${delta}` : "▪ Baseline";
+  const deltaTone = delta > 0 ? "text-emerald-300" : delta < 0 ? "text-rose-300" : "text-white/50";
   return (
     <div className="mt-4 mx-auto max-w-[360px] rounded-xl border border-sovereign-gold/40 bg-gradient-to-br from-[#0d0f14] via-[#11141a] to-[#0a0b10] shadow-[0_10px_40px_rgba(0,0,0,0.6)] overflow-hidden">
       <div className="flex items-center justify-between px-3 py-1.5 border-b border-sovereign-gold/25 bg-black/40">
-        <div className="mono text-[9px] tracking-[0.2em] gold-text font-black">▾ BAV™ BEHAVIORAL ANALYTICS</div>
+        <div className="mono text-[9px] tracking-[0.2em] gold-text font-black">▾ ALTERNATIVE CREDIT TELEMETRY ENGINE</div>
         <div className="flex items-center gap-1.5">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
           <span className="mono text-[8px] font-black tracking-widest text-emerald-300 uppercase">Feed Active</span>
@@ -698,7 +700,8 @@ function GritScoreWidget({ value }: { value: number }) {
         <div className="flex items-baseline justify-between">
           <div>
             <div className="mono text-[9px] uppercase tracking-widest text-white/50">AAA Grit Score™</div>
-            <div className="mono font-black text-3xl gold-text leading-none mt-1">{display}<span className="text-white/40 text-sm font-bold"> / 1000</span></div>
+            <div className="mono font-black text-3xl gold-text leading-none mt-1 transition-all duration-300">{value}<span className="text-white/40 text-sm font-bold"> / 1000</span></div>
+            <div className={`mono text-[8.5px] font-black tracking-widest mt-1 ${deltaTone}`}>{deltaLabel}</div>
           </div>
           <div className="text-right">
             <div className="mono text-[8px] uppercase tracking-widest text-white/40">Tier</div>
@@ -706,14 +709,23 @@ function GritScoreWidget({ value }: { value: number }) {
           </div>
         </div>
         <div className="h-1.5 mt-3 rounded-full bg-white/5 overflow-hidden">
-          <div className="h-full rounded-full bg-gradient-to-r from-sovereign-gold via-sovereign-goldlite to-sovereign-gold" style={{ width: `${pct}%` }} />
+          <div className="h-full rounded-full bg-gradient-to-r from-sovereign-gold via-sovereign-goldlite to-sovereign-gold transition-all duration-500" style={{ width: `${pct}%` }} />
         </div>
-        <div className="mt-2 inline-flex items-center gap-1.5 rounded px-2 py-1 border border-sovereign-gold/40 bg-sovereign-gold/5">
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-sovereign-goldlite animate-pulse" />
-          <span className="mono text-[8.5px] font-black tracking-wider text-sovereign-goldlite uppercase">
-            AAA GRIT SCORE™: 780 // Asynchronous Behavioral Analytics Feed Active
-          </span>
-        </div>
+        {meritFlash ? (
+          <div className="mt-2 inline-flex items-center gap-1.5 rounded px-2 py-1 border border-emerald-400/70 bg-emerald-500/15 animate-pulse">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-300" />
+            <span className="mono text-[8.5px] font-black tracking-wider text-emerald-200 uppercase">
+              ✓ Academic Velocity Linked · Grit → {value}
+            </span>
+          </div>
+        ) : (
+          <div className="mt-2 inline-flex items-center gap-1.5 rounded px-2 py-1 border border-sovereign-gold/40 bg-sovereign-gold/5">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-sovereign-goldlite animate-pulse" />
+            <span className="mono text-[8.5px] font-black tracking-wider text-sovereign-goldlite uppercase">
+              AAA GRIT SCORE™: {value} // Asynchronous Behavioral Analytics Feed Active
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
