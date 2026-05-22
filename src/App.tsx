@@ -903,7 +903,7 @@ function AuditTab({ ledger }: { ledger: LedgerRow[] }) {
           <div key={i} className="border-b border-white/10 py-1.5 text-[10px]">
             <div className="flex justify-between">
               <span className="opacity-70">{r.ts.slice(11, 19)}</span>
-              <span className={`${flagColor(r.whitelist)} font-black`}>{r.whitelist}</span>
+              <span className={`${flagColor(r.whitelist)} font-black`}>{flagLabel(r.whitelist)}</span>
             </div>
             <div className="flex justify-between">
               <span className="truncate pr-2">{r.desc}</span>
