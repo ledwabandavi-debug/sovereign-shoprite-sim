@@ -141,7 +141,9 @@ export default function App() {
   const { beep, buzz } = useAudio();
   const [vault, setVault] = useState(VAULT_INIT);
   const [flex, setFlex] = useState(FLEX_INIT);
-  const [grit, setGrit] = useState(740);
+  const [grit, setGrit] = useState(780);
+  const [meritFlash, setMeritFlash] = useState(false);
+  const [insufficientFlex, setInsufficientFlex] = useState<string | null>(null);
   const [receipt, setReceipt] = useState<ReceiptLine[]>([]);
   const [latency, setLatency] = useState(TARGET_MS);
   const [pulse, setPulse] = useState(false);
